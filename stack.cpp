@@ -84,6 +84,7 @@ public:
 	}
 	~Stack() {
 			begin.clear();
+			idx = 0;
 	} void reset() {
 			begin.clear();
 	}
@@ -107,8 +108,9 @@ public:
 	T mid() {return begin[begin.size()/2];}
 	std::vector<T> operator++(int) {
 		std::vector<T> v;
-		for(int i=idx;i<begin.size();i++)  v.push_back(begin[i]);
+		for(int i=1;i<begin.size();i++)  v.push_back(begin[i]);
 		begin = v;
+		//std::cout << begin.size() << "\n";
 		idx+=1;
 		return v;
 	}
@@ -196,10 +198,11 @@ void actions(char *name) {
 		 stack++;
 		 Gotos.push_back(*stack);
 	}
+
 	
-	for(auto i = 0;i<Gotos.size();i+=3) {
-		if(Gotos[i] == 5 && Gotos[i+1] == 5) std::cout << "found pair\n";
-		printf("%d : %d\n", Gotos[i], Gotos[i+1]);
+	for(auto i = 0;i<Gotos.size();i+=2) {
+		if(Gotos[i] == 5 && Gotos[i+1] == 3) std::cout << "found pair\n";
+		//printf("%d : %d\n", Gotos[i], Gotos[i+1]);
 	}
 }
 

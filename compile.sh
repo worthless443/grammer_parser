@@ -1,3 +1,3 @@
 #!/bin/bash
-g++ parser_prot.cc -I./ -o parser && ./parser
+g++ parser_prot.cc stack.cpp -I./ -o parser 
 
