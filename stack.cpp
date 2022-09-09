@@ -7,6 +7,7 @@
 #include<iterator>
 
 #include<cstring>
+#include<cstdlib>
 
 #include<parser_prot.h>
 typedef struct {} Action; // for  now they are empty
@@ -111,10 +112,15 @@ public:
 		for(int i=1;i<begin.size();i++)  v.push_back(begin[i]);
 		begin = v;
 		//std::cout << begin.size() << "\n";
-		idx+=1;
 		return v;
 	}
-
+	std::vector<T> operator+=(int size) {
+		std::vector<T> v;
+		for(int i=size;i<begin.size();i++)  v.push_back(begin[i]);
+		begin = v;
+		//std::cout << begin.size() << "\n";
+		return v;
+	}
 	int operator*() { return begin[0].getGoto(); }
 
 	T operator[](int idx) {return begin[idx];}
@@ -192,13 +198,14 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 
 }
 
+// TODO merge these two functions as one
 Stack<int> actions(char *name) {
 	rule_t *tree = NULL;
 	tree = store_as_two_lookaheads(tree, name);
 	Stack<States<std::string>> stack = skeleton_lr(tree);
 	Stack<int> s_stack;
 	while(stack.size()>0) {
-		 stack++;
+		 stack+=2;
 		 if(stack[0].getGoto() == 5 && stack[1].getGoto() == 3) {
 			 s_stack.push(10);
 			 s_stack.pout(5);
@@ -212,18 +219,32 @@ Stack<int> actions(char *name) {
 	}
 	return s_stack;
 }
-
-void action_order(char *name) {
+int action_order(char *name) {
 	Stack<int> stack = actions(name);
+	std::vector<int> Lists;
+	Stack<int> Shifts;
+	
 	//while(true) {
 	//	std::cout << "times\n";
 	//	if(stack.top()==10) break;
 	//	else stack.pop(stack.top());
 	//}
-	for(int i=0;i<3;i++) stack.pop(3);
-	stack.pop(5);
-	if(stack.top() == 0) std::cout << "error extra parens\n";
-	else if (stack.top() == 10) std::cout << "success\n";
+	//stack.print();
+	int count_x = 0, count_y = 0;
+	while(stack.size()>1) {
+		stack++;
+		if(stack.top()==10) Lists.push_back(stack.top());
+		else if(stack.top()==3 ) count_x++;
+		else if(stack.top()==5 ) count_y++;
+	}
+	//std::cout << count_y << " "  << count_x << "\n";
+	if(count_y > 0) return 0;
+	return 1;
+	while(Shifts.size()>0) {
+		Shifts++;
+		if(Shifts.top()==5) return 0;
+	}
+	return 1;
 }
 
 
@@ -232,14 +253,16 @@ int main(int argc, const char **argv) {
 		std::cout << "no file provided\n";
 		return 1;
 	}
-	char *buf = new char;
+	char *buf = (char*)malloc(100* sizeof(char));
 	FILE *f = fopen(argv[1], "r");
 	char shortbuf[1];
 	while(fread(shortbuf, 1,1,f)) {
 		strcat(buf,shortbuf);
 	}
-	action_order(buf);
+	if(!action_order(buf)) std::cout << "extra parms\n";
+	else std::cout << "success\n";
 	//stack.print();
+	free(buf);
 	return 0;
 	std::vector<std::string> list = str2list<std::string>(argv[1]);
 	if(list.size()<1) return 1;

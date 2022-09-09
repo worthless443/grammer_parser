@@ -11,7 +11,7 @@ Parsing only limited to expresions like `(a+b)*(a-b)`, doesn't work nested paren
 Contents of current expr.txt
 
 ```
-2 * 2 (2)()
+
 ```
 
 ## ToDO 
@@ -19,5 +19,6 @@ Contents of current expr.txt
 | Goal | Description | status | 
 | ---- | ------------| ------ |
 | Parser | parse values and expressions, and check for errors | working on |
+| class Parser | bind everything in a class Parser | working on | 
 | Evaluator | evalute results | not working on |
 | IR | Construct itermediate Representation | not working on |
