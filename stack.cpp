@@ -116,6 +116,9 @@ public:
 	}
 
 	int operator*() { return begin[0].getGoto(); }
+
+	T operator[](int idx) {return begin[idx];}
+
 	int size() {return begin.size();}
 	
 	void pop(T val) {
@@ -189,22 +192,40 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 
 }
 
-void actions(char *name) {
+Stack<int> actions(char *name) {
 	rule_t *tree = NULL;
 	tree = store_as_two_lookaheads(tree, name);
 	Stack<States<std::string>> stack = skeleton_lr(tree);
-	std::vector<int> Gotos;
+	Stack<int> s_stack;
 	while(stack.size()>0) {
 		 stack++;
-		 Gotos.push_back(*stack);
+		 if(stack[0].getGoto() == 5 && stack[1].getGoto() == 3) {
+			 s_stack.push(10);
+			 s_stack.pout(5);
+			 s_stack.pout(3);
+		 }
+		 else {
+			 s_stack.push(stack[0].getGoto());
+			 s_stack.push(stack[1].getGoto());
+		 }
+		 
 	}
-
-	
-	for(auto i = 0;i<Gotos.size();i+=2) {
-		if(Gotos[i] == 5 && Gotos[i+1] == 3) std::cout << "found pair\n";
-		//printf("%d : %d\n", Gotos[i], Gotos[i+1]);
-	}
+	return s_stack;
 }
+
+void action_order(char *name) {
+	Stack<int> stack = actions(name);
+	//while(true) {
+	//	std::cout << "times\n";
+	//	if(stack.top()==10) break;
+	//	else stack.pop(stack.top());
+	//}
+	for(int i=0;i<3;i++) stack.pop(3);
+	stack.pop(5);
+	if(stack.top() == 0) std::cout << "error extra parens\n";
+	else if (stack.top() == 10) std::cout << "success\n";
+}
+
 
 int main(int argc, const char **argv) {
 	if(argc<2)  {
@@ -217,7 +238,7 @@ int main(int argc, const char **argv) {
 	while(fread(shortbuf, 1,1,f)) {
 		strcat(buf,shortbuf);
 	}
-	actions(buf);
+	action_order(buf);
 	//stack.print();
 	return 0;
 	std::vector<std::string> list = str2list<std::string>(argv[1]);
