@@ -199,11 +199,36 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 }
 
 // TODO merge these two functions as one
-Stack<int> actions(char *name) {
+int rec_actions(char *name) {
 	rule_t *tree = NULL;
 	tree = store_as_two_lookaheads(tree, name);
 	Stack<States<std::string>> stack = skeleton_lr(tree);
 	Stack<int> s_stack;
+	int count_x = 0, count_y = 0;
+	while(stack.size()>0) {
+		 stack+=2;
+		 s_stack++;
+		 if(stack[0].getGoto() == 5 && stack[1].getGoto() == 3) {
+			 s_stack.push(10);
+			 s_stack.pout(5);
+			 s_stack.pout(3);
+		 }
+		 else {
+			 s_stack.push(stack[0].getGoto());
+			 s_stack.push(stack[1].getGoto());
+		 }
+		if(s_stack.top()==3 ) count_x++;
+		else if(s_stack.top()==5 ) count_y++;
+	}
+	return (count_x + count_y)%2;
+}
+
+int actions(char *name) {
+	rule_t *tree = NULL;
+	tree = store_as_two_lookaheads(tree, name);
+	Stack<States<std::string>> stack = skeleton_lr(tree);
+	Stack<int> s_stack;
+	int count_x = 0, count_y = 0;
 	while(stack.size()>0) {
 		 stack+=2;
 		 if(stack[0].getGoto() == 5 && stack[1].getGoto() == 3) {
@@ -215,36 +240,16 @@ Stack<int> actions(char *name) {
 			 s_stack.push(stack[0].getGoto());
 			 s_stack.push(stack[1].getGoto());
 		 }
-		 
 	}
-	return s_stack;
-}
-int action_order(char *name) {
-	Stack<int> stack = actions(name);
-	std::vector<int> Lists;
-	Stack<int> Shifts;
+
+	while(s_stack.size()>1) {
+		s_stack++;
+		if(s_stack.top()==3 ) count_x++;
+		else if(s_stack.top()==5 ) count_y++;
+	}
 	
-	//while(true) {
-	//	std::cout << "times\n";
-	//	if(stack.top()==10) break;
-	//	else stack.pop(stack.top());
-	//}
-	//stack.print();
-	int count_x = 0, count_y = 0;
-	while(stack.size()>1) {
-		stack++;
-		if(stack.top()==10) Lists.push_back(stack.top());
-		else if(stack.top()==3 ) count_x++;
-		else if(stack.top()==5 ) count_y++;
-	}
-	//std::cout << count_y << " "  << count_x << "\n";
-	if(count_y > 0) return 0;
-	return 1;
-	while(Shifts.size()>0) {
-		Shifts++;
-		if(Shifts.top()==5) return 0;
-	}
-	return 1;
+	printf("%d : %d\n", count_x, count_y);
+	return count_y ? 1 : 0;
 }
 
 
@@ -259,7 +264,7 @@ int main(int argc, const char **argv) {
 	while(fread(shortbuf, 1,1,f)) {
 		strcat(buf,shortbuf);
 	}
-	if(!action_order(buf)) std::cout << "extra parms\n";
+	if(rec_actions(buf)) std::cout << "extra parms\n";
 	else std::cout << "success\n";
 	//stack.print();
 	free(buf);
