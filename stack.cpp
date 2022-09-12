@@ -5,12 +5,16 @@
 #include<string>
 #include<sstream>
 #include<iterator>
+#include<utility>
 
 #include<cstring>
 #include<cstdlib>
 
 #include<parser_prot.h>
-typedef struct {} Action; // for  now they are empty
+#include<decorate_error.h>
+#include<eval.h>
+
+typedef struct {} Action; // shoudl be filled with function pointers
 typedef struct {
 public:
 	int action;	
@@ -194,11 +198,52 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 		Goto.push(s.getGoto());
 		tree = tree->next1;
 	}
+	free_tree(tree);
 	return stack;
 
 }
 
-// TODO merge these two functions as one
+Stack<std::string> skeleton_values(rule_t *tree) {
+	Stack<std::string> stack;
+	while(tree!=NULL) {
+		if(tree->data_s != "(null)")  stack.push(tree->data_s);
+		tree = tree->next1;
+	}
+
+	return stack;
+}
+
+// needs the class Stack, inorder to turn into a vector
+
+std::vector<std::string> vectorize_stack_lr(char *name) {
+	rule_t *tree;
+	std::vector<std::string> vec_lr;
+	tree = store_as_two_lookaheads(tree, name);
+	Stack<States<std::string>> stack_lr = skeleton_lr(tree);
+	free_tree(tree);
+	while(stack_lr.size()>0) {
+		stack_lr++;
+		vec_lr.push_back(stack_lr.top().getstr());
+	}
+	return vec_lr;
+}
+// needs the class Stack, inorder to turn into a vector. That's why can not put them in another function
+// now that we are using std::vector, we might as well use them in untils.h
+
+std::vector<std::string> vectorize_stack_values(char *name) {
+	rule_t *tree;
+	std::vector<std::string> vec_values;
+	tree = store_as_two_lookaheads(tree, name);
+	Stack<std::string> stack_values = skeleton_values(tree);
+	free_tree(tree);
+	while(stack_values.size()>0) {
+		stack_values++;
+		vec_values.push_back(stack_values.top());
+	}
+	return vec_values;
+}
+
+
 int rec_actions(char *name) {
 	rule_t *tree = NULL;
 	tree = store_as_two_lookaheads(tree, name);
@@ -252,7 +297,6 @@ int actions(char *name) {
 	return count_y ? 1 : 0;
 }
 
-
 int main(int argc, const char **argv) {
 	if(argc<2)  {
 		std::cout << "no file provided\n";
@@ -261,14 +305,41 @@ int main(int argc, const char **argv) {
 	char *buf = (char*)malloc(100* sizeof(char));
 	FILE *f = fopen(argv[1], "r");
 	char shortbuf[1];
+	int rec = 0, normal = 0;
 	while(fread(shortbuf, 1,1,f)) {
 		strcat(buf,shortbuf);
 	}
-	if(rec_actions(buf)) std::cout << "extra parms\n";
-	else std::cout << "success\n";
-	//stack.print();
+	if(!actions(buf)) { 
+		std::cout << "Normal:extra parms\n";
+		normal += 1;
+	}
+	else std::cout << "Normal:success\n";
+	if(rec_actions(buf)) {
+		std::cout << "Recrusive:extra parms\n";
+		rec += 1;
+	}
+	else std::cout << "Recrusive:success\n";
+	std::cout << "\n\n\n";
+
+	std::cout << "stats:\n\n";
+
+	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
+	std::vector<std::string> vec_values = vectorize_stack_values(buf);
+
+	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
+	//int ret = eval_main(pair.first, pair.second);
+	
+	int res = eval_main(pair);
+
+	std::cout << "EVAL Val == " << res << "\n";
+
+	DecorError decor(vec_lr, vec_values);
+
+	std::cout << decor << "\n";
 	free(buf);
-	return 0;
+	std::cout << "exiting with error code: " << rec + normal << "\n";
+	return rec + normal ;
+	//stack.print();
 	std::vector<std::string> list = str2list<std::string>(argv[1]);
 	if(list.size()<1) return 1;
 	Stack<States<std::string>> ss;
