@@ -20,5 +20,5 @@ Contents of current expr.txt
 | ---- | ------------| ------ |
 | Parser | parse values and expressions, and check for errors | working on |
 | class Parser | bind everything in a class Parser | working on | 
-| Evaluator | evalute results | not working on |
+| Evaluator | evalute results | working on |
 | IR | Construct itermediate Representation | not working on |
