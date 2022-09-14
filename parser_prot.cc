@@ -84,7 +84,6 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 }
 
 void free_tree(rule_t *r) {
-	printf("ssize\n");
 	if(r==NULL) return;
 	free(r);
 	free_tree(r->next1);
