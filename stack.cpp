@@ -6,6 +6,7 @@
 #include<sstream>
 #include<iterator>
 #include<utility>
+#include<regex>
 
 #include<cstring>
 #include<cstdlib>
@@ -14,6 +15,7 @@
 #include<decorate_error.h>
 #include<eval.h>
 #include<stack.h>
+#include<TableGen.h>
 
 template<class T>
 std::vector<T> str2list(const char *string) {
@@ -92,6 +94,17 @@ std::vector<std::string> vectorize_stack_values(char *name) {
 	return vec_values;
 }
 
+auto intVec(std::vector<std::string> vec) {
+	std::vector<int> vec_i;
+	std::regex  re("[0-9]");
+	std::string s;
+	for(auto S : vec)  s += S;
+	for(auto c : s) {
+		if( c == "5"[0] ) vec_i.push_back(5);
+		else if( c == "3"[0] ) vec_i.push_back(3);
+	}
+	return vec_i;
+}
 
 int rec_actions(char *name) {
 	rule_t *tree = NULL;
@@ -174,6 +187,14 @@ int main(int argc, const char **argv) {
 
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
 	std::vector<std::string> vec_values = vectorize_stack_values(buf);
+
+	auto vec_i = intVec(vec_lr);
+	auto stack = create_stack(vec_i);
+	auto vi = create_identity(stack);
+	auto items = process(vi);
+	vis_lr_item(items);
+	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
+	return 0;
 
 	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
 	//int ret = eval_main(pair.first, pair.second);
