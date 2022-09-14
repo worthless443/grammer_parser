@@ -11,7 +11,11 @@ Parsing only limited to expresions like `(a+b)*(a-b)`, doesn't work nested paren
 Contents of current expr.txt
 
 ```
-
+((())) 
+```
+or 
+```
+(a+(b+(c-1))) 
 ```
 
 ## ToDO 
