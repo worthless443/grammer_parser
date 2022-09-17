@@ -55,8 +55,10 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree!=NULL) {
-		if(tree->data_s != "(null)")  stack.push(tree->data_s);
-		std::cout << "niger\n";
+		if(tree->data_s != "(null)")  {
+			printf("%s\n", tree->data_s.c_str());
+			stack.push(tree->data_s);
+		}
 		tree = tree->next1;
 	}
 	return stack;
@@ -162,7 +164,7 @@ int main(int argc, const char **argv) {
 		std::cout << "no file provided\n";
 		return 1;
 	}
-	char *buf = (char*)malloc(1000* sizeof(char));
+	char *buf = (char*)malloc(10000* sizeof(char));
 	FILE *f = fopen(argv[1], "r");
 	char shortbuf[1];
 	int rec = 0, normal = 0;
@@ -184,13 +186,15 @@ int main(int argc, const char **argv) {
 	std::cout << "stats:\n\n";
 
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
-	std::vector<std::string> vec_values; //= vectorize_stack_values(buf);
+	std::vector<std::string> vec_values= vectorize_stack_values(buf);
 
 	auto vec_i = intVec(vec_lr);
 	auto stack = create_stack(vec_i);
 	auto vi = create_identity(stack);
 	auto items = process(vi);
 	vis_lr_item(items);
+	//closure(items);
+	return 0;
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
 	//return 0;
 

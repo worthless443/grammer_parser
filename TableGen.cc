@@ -102,10 +102,13 @@ void closure(std::vector<std::vector<Item>> vec2d)  {
 		return v;
 	};
 
-	while(vec2d[0][0].getContainer()[0]==vec2d[1][0].getContainer()[0]) {
+	int ref = 0;
+	while(vec2d[0][0].getContainer()[0]!=10 && vec2d[1][0].getContainer()[0] !=10) {
 		std::cout << "contain fuck\n";
 		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
-		if(vec2d.size()<=3 || vec2d[0].size()==1 || vec2d[1].size()==1) break;
+		if(vec2d.size()<=3 || vec2d[0].size()<2 || vec2d[1].size()<2) break;
+		ref+=1; // so it does not hault
+		if(ref>1000) break; //maximum limit
 	}
 }
 
