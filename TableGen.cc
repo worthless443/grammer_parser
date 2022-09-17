@@ -56,7 +56,7 @@ std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 		std::vector<Item> vec_item;
 		Item item(-1);
 		while(true) {
-			 if(vec[i] == vec[i+1]) {
+			 if(vec[i] != vec[i+1]) {
 				item.stackUpCurrent(10);
 				item.makeList(vec[i],vec[i+1]);
 				vec_item.push_back(item);
