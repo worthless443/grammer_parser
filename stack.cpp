@@ -197,9 +197,6 @@ auto First(auto items) {
 	while(copy_items.size()>2)  {
 		copy_items= Iter2Vec(copy_items.begin() + 2, copy_items.end());
 		auto items_ = Iter2Vec(copy_items.begin(), copy_items.end()-2);
-		std::cout << items_.size() << "\n";
-		//std::cout << items_[0][0].getContainer()[0] << "\n";
-		//std::cout << items_.size() << "\n";
 		if(items_.size()<1) break;
 		itms.push_back(closure(copy_items));
 	}
@@ -236,7 +233,6 @@ int main(int argc, const char **argv) {
 	std::vector<std::string> vec_values= vectorize_stack_values(buf);
 	auto items = AllItems(vec_lr);
 	auto items_ = First(items);
-	//auto items_ = First(items);
 	std::cout << "Items size  -> " << items.size() << "\n";
 	vis_lr_item(items_);
 	return 0;
