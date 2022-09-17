@@ -17,6 +17,12 @@
 #include<stack.h>
 #include<TableGen.h>
 
+std::vector<Item> Iter2Vec_Main(std::vector<Item>::iterator begin, std::vector<Item>::iterator end) {
+		std::vector<Item> v;
+		for(auto i = begin;i<end;i++) v.push_back(*i);
+		return v;
+};
+
 template<class T>
 std::vector<T> str2list(const char *string) {
 	std::vector<T> vec;
@@ -56,7 +62,6 @@ Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree!=NULL) {
 		if(tree->data_s != "(null)")  {
-			printf("%s\n", tree->data_s.c_str());
 			stack.push(tree->data_s);
 		}
 		tree = tree->next1;
@@ -159,6 +164,48 @@ int actions(char *name) {
 	return count_y ? 1 : 0;
 }
 
+
+auto AllItems(std::vector<std::string> vec_lr){
+	auto vec_i = intVec(vec_lr);
+	auto stack = create_stack(vec_i);
+	auto vi = create_identity(stack);
+	return process(vi);
+}
+// -> std::vector<std::vector<Item>> 
+auto FirstRobust(auto items) {
+	std::vector<std::vector<Item>> itms;
+	int i=0;
+	std::vector<std::vector<Item>> copy_items = items;
+	while(copy_items.size()>2)  {
+		copy_items= Iter2Vec(copy_items.begin() + 2, copy_items.end());
+		auto items_ = Iter2Vec(copy_items.begin(), copy_items.end()-2);
+		std::cout << items_.size() << "\n";
+		//std::cout << items_[0][0].getContainer()[0] << "\n";
+		//std::cout << items_.size() << "\n";
+		if(items_.size()<1) break;
+		itms.push_back(closure(items));
+	}
+	return itms;
+}
+
+
+// -> std::vector<std::vector<Item>> 
+auto First(auto items) {
+	std::vector<std::vector<Item>> itms;
+	int i=0;
+	std::vector<std::vector<Item>> copy_items = items;
+	while(copy_items.size()>2)  {
+		copy_items= Iter2Vec(copy_items.begin() + 2, copy_items.end());
+		auto items_ = Iter2Vec(copy_items.begin(), copy_items.end()-2);
+		std::cout << items_.size() << "\n";
+		//std::cout << items_[0][0].getContainer()[0] << "\n";
+		//std::cout << items_.size() << "\n";
+		if(items_.size()<1) break;
+		itms.push_back(closure(copy_items));
+	}
+	return itms;
+}
+
 int main(int argc, const char **argv) {
 	if(argc<2)  {
 		std::cout << "no file provided\n";
@@ -187,13 +234,11 @@ int main(int argc, const char **argv) {
 
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
 	std::vector<std::string> vec_values= vectorize_stack_values(buf);
-
-	auto vec_i = intVec(vec_lr);
-	auto stack = create_stack(vec_i);
-	auto vi = create_identity(stack);
-	auto items = process(vi);
-	vis_lr_item(items);
-	//closure(items);
+	auto items = AllItems(vec_lr);
+	auto items_ = First(items);
+	//auto items_ = First(items);
+	std::cout << "Items size  -> " << items.size() << "\n";
+	vis_lr_item(items_);
 	return 0;
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
 	//return 0;

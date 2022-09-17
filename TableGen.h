@@ -25,6 +25,7 @@ public:
 	void stackUpCurrent(int i) {
 		container.push_back(i);
 	}
+	std::pair<int,int> getList() {return std::make_pair(prod.list.a, prod.list.b);}
 	void makeList(int a,int b) {prod = {a,b};}
 	void print() {for(int i : container) std::cout << i << " ";std::cout << "\n";}
 	std::vector<int> getContainer() {return container;}
@@ -55,10 +56,11 @@ public:
 	}
 };
 
+std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end);
 
 int generic_arraySearch(std::vector<int> vec, int what);
 Stack<States<int>> create_stack(std::vector<int> vec);
 std::vector<int> create_identity(Stack<States<int>> stack);
 std::vector<std::vector<Item>> process(std::vector<int> vec);
-void closure(std::vector<std::vector<Item>> vec2d);
+std::vector<Item> closure(std::vector<std::vector<Item>> vec2d);
 void vis_lr_item(std::vector<std::vector<Item>> vec2d);
