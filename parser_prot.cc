@@ -48,45 +48,57 @@ rule_t  *mk_parse_paren(rule_t *rr, char *exp) {
 	return rr;
 }
 
-static std::vector<std::string> parse_string(const char *expr) {
-	std::vector<std::string> vec;
+static int *parse_string(const char *expr) {
+	int* vec = (int*)malloc(500000*sizeof(int));
 	for(int i=0;i<strlen(expr);i++) {
 		int each = expr[i];
-		vec.push_back(std::string((char*)&each));
+		vec[i] = each;
 	}
 	return vec;
 }
 
+size_t size_int_ptr(int *vec) {
+	size_t size;
+	for(size=0;*(vec+size);size++);
+	return size;
+}
 rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	tree = new rule_t;
 	expr = filter_str(expr);
 	std::string expr_(expr) ;
-	std::vector<std::string> vec = parse_string(expr);
-	if(vec[0]=="(") {
-		tree->param1_s = vec[0];
+	int *vec = parse_string(expr);
+	std::string comp((char*)&vec[0]);
+	size_t size = size_int_ptr(vec);
+	//std::cout <<  comp << "\n";
+	if(comp=="(") {
+		tree->param1_s = comp;
 		tree->param2_s  = "(null)";
 		tree->data_s  = "(null)";
 	}
-	else if(vec[0]==")") {
+	else if(comp==")") {
 		tree->param1_s = "(null)";
-		tree->param2_s  = vec[0];
+		tree->param2_s  = comp;
 		tree->data_s  = "(null)";
 	}
 	else {
 		tree->param1_s = "(null)";
 		tree->param2_s  = "(null)";
-		tree->data_s  = vec[0];
+		tree->data_s  = comp;
 	}
 
-	if(vec.size()==1) return tree;
+	free(vec);
+	if(size==0) return tree;
+	//if(vec.size()<2) return tree;
 	tree->next1 =  store_as_two_lookaheads(tree->next1, &(*(expr_.begin() + 1)));
 	return tree;
 }
 
 void free_tree(rule_t *r) {
 	if(r==NULL) return;
-	free(r);
-	free_tree(r->next1);
+	else {
+		free(r);
+		free_tree(r->next1);
+	}
 	
 }
 
