@@ -97,7 +97,6 @@ void decorate1(Item item) {
 					item.getPlaceHolder());
 }
 void decorate2(Item item) {
-	std::cout << item.getPlaceHolder() << "\n";
 	if(item.getPlaceHolder() == 0) printf("A(%s) -> (%d)By\n", 
 						 "U_Symbol"
 						, item.getPlaceHolder());
@@ -111,7 +110,6 @@ void decorate2(Item item) {
 void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 	for (auto vec : vec2d) {
 		// diversify it 
-		std::cout << vec.size() << "\n";
 		if(vec.size()<1) break;
 		for(Item item : vec) {
 			if(item.getList().first == item.getList().second) {
