@@ -49,18 +49,16 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 		Goto.push(s.getGoto());
 		tree = tree->next1;
 	}
-	free_tree(tree);
 	return stack;
 
 }
-
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree!=NULL) {
 		if(tree->data_s != "(null)")  stack.push(tree->data_s);
+		std::cout << "niger\n";
 		tree = tree->next1;
 	}
-
 	return stack;
 }
 
@@ -82,7 +80,7 @@ std::vector<std::string> vectorize_stack_lr(char *name) {
 // now that we are using std::vector, we might as well use them in untils.h
 
 std::vector<std::string> vectorize_stack_values(char *name) {
-	rule_t *tree;
+	rule_t *tree = NULL;
 	std::vector<std::string> vec_values;
 	tree = store_as_two_lookaheads(tree, name);
 	Stack<std::string> stack_values = skeleton_values(tree);
@@ -186,7 +184,7 @@ int main(int argc, const char **argv) {
 	std::cout << "stats:\n\n";
 
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
-	std::vector<std::string> vec_values = vectorize_stack_values(buf);
+	std::vector<std::string> vec_values; //= vectorize_stack_values(buf);
 
 	auto vec_i = intVec(vec_lr);
 	auto stack = create_stack(vec_i);
@@ -194,7 +192,7 @@ int main(int argc, const char **argv) {
 	auto items = process(vi);
 	vis_lr_item(items);
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
-	return 0;
+	//return 0;
 
 	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
 	//int ret = eval_main(pair.first, pair.second);
