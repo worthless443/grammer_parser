@@ -78,6 +78,7 @@ std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 
 void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 	for (auto vec : vec2d) {
+		// diversify it 
 		for(Item item : vec) {
 				if(item.getPlaceHolder() == 0) printf("A(%s) -> (%d)By\n", 
 						item.getContainer()[0] == 10 ? "List" : "Symbol"
@@ -92,6 +93,22 @@ void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 		printf("\n\n\n");
 	}
 }
+
+//haults sometimes 
+void closure(std::vector<std::vector<Item>> vec2d)  {
+	auto Iter2Vec = [](std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end) {
+		std::vector<std::vector<Item>> v;
+		for(auto i = begin;i<end;i++) v.push_back(*i);
+		return v;
+	};
+
+	while(vec2d[0][0].getContainer()[0]==vec2d[1][0].getContainer()[0]) {
+		std::cout << "contain fuck\n";
+		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
+		if(vec2d.size()<=3 || vec2d[0].size()==1 || vec2d[1].size()==1) break;
+	}
+}
+
 
 #ifdef __main__ 
 int main() {

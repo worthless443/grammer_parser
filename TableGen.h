@@ -60,4 +60,5 @@ int generic_arraySearch(std::vector<int> vec, int what);
 Stack<States<int>> create_stack(std::vector<int> vec);
 std::vector<int> create_identity(Stack<States<int>> stack);
 std::vector<std::vector<Item>> process(std::vector<int> vec);
+void closure(std::vector<std::vector<Item>> vec2d);
 void vis_lr_item(std::vector<std::vector<Item>> vec2d);
