@@ -164,7 +164,7 @@ int main(int argc, const char **argv) {
 		std::cout << "no file provided\n";
 		return 1;
 	}
-	char *buf = (char*)malloc(100* sizeof(char));
+	char *buf = (char*)malloc(1000* sizeof(char));
 	FILE *f = fopen(argv[1], "r");
 	char shortbuf[1];
 	int rec = 0, normal = 0;
