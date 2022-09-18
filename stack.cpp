@@ -17,6 +17,12 @@
 #include<stack.h>
 #include<TableGen.h>
 
+std::vector<Item> Iter2Vec_Main(std::vector<Item>::iterator begin, std::vector<Item>::iterator end) {
+		std::vector<Item> v;
+		for(auto i = begin;i<end;i++) v.push_back(*i);
+		return v;
+};
+
 template<class T>
 std::vector<T> str2list(const char *string) {
 	std::vector<T> vec;
@@ -49,18 +55,17 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 		Goto.push(s.getGoto());
 		tree = tree->next1;
 	}
-	free_tree(tree);
 	return stack;
 
 }
-
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree!=NULL) {
-		if(tree->data_s != "(null)")  stack.push(tree->data_s);
+		if(tree->data_s != "(null)")  {
+			stack.push(tree->data_s);
+		}
 		tree = tree->next1;
 	}
-
 	return stack;
 }
 
@@ -82,7 +87,7 @@ std::vector<std::string> vectorize_stack_lr(char *name) {
 // now that we are using std::vector, we might as well use them in untils.h
 
 std::vector<std::string> vectorize_stack_values(char *name) {
-	rule_t *tree;
+	rule_t *tree = NULL;
 	std::vector<std::string> vec_values;
 	tree = store_as_two_lookaheads(tree, name);
 	Stack<std::string> stack_values = skeleton_values(tree);
@@ -159,12 +164,51 @@ int actions(char *name) {
 	return count_y ? 1 : 0;
 }
 
+
+auto AllItems(std::vector<std::string> vec_lr){
+	auto vec_i = intVec(vec_lr);
+	auto stack = create_stack(vec_i);
+	auto vi = create_identity(stack);
+	return process(vi);
+}
+// -> std::vector<std::vector<Item>> 
+auto FirstRobust(auto items) {
+	std::vector<std::vector<Item>> itms;
+	int i=0;
+	std::vector<std::vector<Item>> copy_items = items;
+	while(copy_items.size()>2)  {
+		copy_items= Iter2Vec(copy_items.begin() + 2, copy_items.end());
+		auto items_ = Iter2Vec(copy_items.begin(), copy_items.end()-2);
+		std::cout << items_.size() << "\n";
+		//std::cout << items_[0][0].getContainer()[0] << "\n";
+		//std::cout << items_.size() << "\n";
+		if(items_.size()<1) break;
+		itms.push_back(closure(items));
+	}
+	return itms;
+}
+
+
+// -> std::vector<std::vector<Item>> 
+auto First(auto items) {
+	std::vector<std::vector<Item>> itms;
+	int i=0;
+	std::vector<std::vector<Item>> copy_items = items;
+	while(copy_items.size()>2)  {
+		copy_items= Iter2Vec(copy_items.begin() + 2, copy_items.end());
+		auto items_ = Iter2Vec(copy_items.begin(), copy_items.end()-2);
+		if(items_.size()<1) break;
+		itms.push_back(closure(copy_items));
+	}
+	return itms;
+}
+
 int main(int argc, const char **argv) {
 	if(argc<2)  {
 		std::cout << "no file provided\n";
 		return 1;
 	}
-	char *buf = (char*)malloc(1000* sizeof(char));
+	char *buf = (char*)malloc(10000* sizeof(char));
 	FILE *f = fopen(argv[1], "r");
 	char shortbuf[1];
 	int rec = 0, normal = 0;
@@ -186,15 +230,14 @@ int main(int argc, const char **argv) {
 	std::cout << "stats:\n\n";
 
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
-	std::vector<std::string> vec_values = vectorize_stack_values(buf);
-
-	auto vec_i = intVec(vec_lr);
-	auto stack = create_stack(vec_i);
-	auto vi = create_identity(stack);
-	auto items = process(vi);
-	vis_lr_item(items);
-	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
+	std::vector<std::string> vec_values= vectorize_stack_values(buf);
+	auto items = AllItems(vec_lr);
+	auto items_ = First(items);
+	std::cout << "Items size  -> " << items.size() << "\n";
+	vis_lr_item(items_);
 	return 0;
+	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
+	//return 0;
 
 	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
 	//int ret = eval_main(pair.first, pair.second);

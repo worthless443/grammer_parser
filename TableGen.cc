@@ -56,7 +56,7 @@ std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 		std::vector<Item> vec_item;
 		Item item(-1);
 		while(true) {
-			 if(vec[i] == vec[i+1]) {
+			 if(vec[i] != vec[i+1]) {
 				item.stackUpCurrent(10);
 				item.makeList(vec[i],vec[i+1]);
 				vec_item.push_back(item);
@@ -76,23 +76,72 @@ std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 	return vec2d;
 }
 
-void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
-	for (auto vec : vec2d) {
-		for(Item item : vec) {
-				if(item.getPlaceHolder() == 0) printf("A(%s) -> (%d)By\n", 
-						item.getContainer()[0] == 10 ? "List" : "Symbol"
+std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end) {
+		std::vector<std::vector<Item>> v;
+		for(auto i = begin;i<end;i++) v.push_back(*i);
+		return v;
+	};
+
+
+void decorate1(Item item) {
+	
+	if(item.getPlaceHolder() == 0) 
+		printf("A(%s) -> (%d)By\n", 
+				item.getContainer()[0] == 10 ? "List" : "Symbol"
+				, item.getPlaceHolder());
+		else if(item.getPlaceHolder() == 1) printf("A(%s) -> B(%d)y\n", 
+				item.getContainer()[0] == 10 ? "List" : "Symbol",
+				item.getPlaceHolder());
+		else if(item.getPlaceHolder() == 2) printf("A(%s) -> By(%d)\n", 
+					item.getContainer()[0] == 10 ? "List" : "Symbol",
+					item.getPlaceHolder());
+}
+void decorate2(Item item) {
+	if(item.getPlaceHolder() == 0) printf("A(%s) -> (%d)By\n", 
+						 "U_Symbol"
 						, item.getPlaceHolder());
 				else if(item.getPlaceHolder() == 1) printf("A(%s) -> B(%d)y\n", 
-						item.getContainer()[0] == 10 ? "List" : "Symbol",
+						 "U_Symbol",
 						item.getPlaceHolder());
 				else if(item.getPlaceHolder() == 2) printf("A(%s) -> By(%d)\n", 
-						item.getContainer()[0] == 10 ? "List" : "Symbol",
+						"U_Symbol",
 						item.getPlaceHolder());
+}
+void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
+	for (auto vec : vec2d) {
+		// diversify it 
+		if(vec.size()<1) break;
+		for(Item item : vec) {
+			if(item.getList().first == item.getList().second) {
+				decorate1(item);
+			}
+			else decorate2(item);
 		}
 		printf("\n\n\n");
 	}
 }
 
+// produces items with placeholder in the middle
+std::vector<Item> closure(std::vector<std::vector<Item>> vec2d)  {
+	std::vector<Item> items;
+	std::cout << "placeholder" << vec2d[1][0].getContainer()[0]  << "\n";
+	while(vec2d[0][0].getContainer()[0] !=10 && vec2d[1][0].getContainer()[0] !=10) {
+		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
+		if(vec2d.size()<=3 || vec2d[0].size()<2 || vec2d[1].size()<2) break;
+		for(auto each_vec : vec2d) {
+			for(Item item : each_vec) {
+				if(item.getPlaceHolder()==1) items.push_back(item);
+			}
+			}
+		}
+
+	return items;
+}
+
+//std::vector<Item> Goto(std::vector<std::vector<Item>> vec2d) {
+//	std	
+//}
+//
 #ifdef __main__ 
 int main() {
 	std::vector<int> vec = {3,3,7,3,7,3,3,3,7,3,3,3,3,7,3,3,7,3,7,3};
