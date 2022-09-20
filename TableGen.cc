@@ -139,25 +139,23 @@ std::vector<Item> closure(std::vector<std::vector<Item>> vec2d)  {
 
 template<class T>
 std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
-	std::vector<T> com;
 	int size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
-	vec1.push_back(vec2[0]);
-	size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
-	std::cout << size << "\n";
+	//std::cout << size << "\n";
 	for(int i=0;i<size;i++) {
 		if(vec1[i]!=vec2[i]) {
-			com.push_back(vec1[i]);
-			com.push_back(vec2[i]);
+			vec1.erase(vec1.begin() + size, vec1.end());
+			vec1.push_back(vec2[i]);
+			vec1.push_back(vec1[i]);
 		}
-		else com.push_back(vec2[i]);
+		else vec1.push_back(vec2[i]);
 	}
-	return com;
+	return vec1;
 }
 
 std::vector<Item> Gt(std::vector<Item> vec) {
-	std::vector<Item> temp;
+	std::vector<Item> temp = {vec[3]};
 	for(Item item : vec) {
-		temp = make_union(temp,vec);  // temp U vec
+		temp = make_union(temp,vec);  // temp U vec	
 	}
 	return temp;
 }
