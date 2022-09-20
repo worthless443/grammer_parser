@@ -96,6 +96,7 @@ void decorate1(Item item) {
 					item.getContainer()[0] == 10 ? "List" : "Symbol",
 					item.getPlaceHolder());
 }
+
 void decorate2(Item item) {
 	if(item.getPlaceHolder() == 0) printf("A(%s) -> (%d)By\n", 
 						 "U_Symbol"
@@ -107,6 +108,7 @@ void decorate2(Item item) {
 						"U_Symbol",
 						item.getPlaceHolder());
 }
+
 void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 	for (auto vec : vec2d) {
 		// diversify it 
@@ -142,7 +144,7 @@ std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
 	int size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
 	//std::cout << size << "\n";
 	for(int i=0;i<size;i++) {
-		if(vec1[i]!=vec2[i]) {
+		if(vec1[i]!=vec2[i]) { // the placeholder always equal, id understand why
 			vec1.erase(vec1.begin() + size, vec1.end());
 			vec1.push_back(vec2[i]);
 			vec1.push_back(vec1[i]);
@@ -153,11 +155,20 @@ std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
 }
 
 std::vector<Item> Gt(std::vector<Item> vec) {
-	std::vector<Item> temp = {vec[3]};
+	std::vector<Item> temp = {vec[3]}; // a random index to start at
 	for(Item item : vec) {
+		size_t prevsize = temp.size();
 		temp = make_union(temp,vec);  // temp U vec	
+		size_t cursize = temp.size();
+		if(cursize-prevsize == 30) break;
 	}
 	return temp;
+}
+
+std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2d ) {
+	std::vector<std::vector<Item>> out;
+	for(auto vec : vec2d) out.push_back(Gt(vec));
+	return out;
 }
 
 #ifdef __main__ 

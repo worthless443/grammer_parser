@@ -232,13 +232,13 @@ int main(int argc, const char **argv) {
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
 	std::vector<std::string> vec_values= vectorize_stack_values(buf);
 	auto items = AllItems(vec_lr);
-	auto items_ = First(items);
-	std::cout << "Items size  -> " << items.size() << "\n";
+	auto items_ = FirstRobust(items);
+	std::cout << "Items size  -> " << items_[0].size() << "\n";
+	auto gtitems = build_GtTable(items_);
+	vis_lr_item(gtitems);
 	//vis_lr_item(items_);
-	std::cout <<  Gt(closure(items)).size() << "\n";
-	return 0;
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
-	//return 0;
+	return 0;
 
 	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
 	
