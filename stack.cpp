@@ -241,7 +241,6 @@ int main(int argc, const char **argv) {
 	//return 0;
 
 	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
-	//int ret = eval_main(pair.first, pair.second);
 	
 	int res = eval_main(pair);
 
