@@ -124,24 +124,44 @@ void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 // produces items with placeholder in the middle
 std::vector<Item> closure(std::vector<std::vector<Item>> vec2d)  {
 	std::vector<Item> items;
-	std::cout << "placeholder" << vec2d[1][0].getContainer()[0]  << "\n";
 	while(vec2d[0][0].getContainer()[0] !=10 && vec2d[1][0].getContainer()[0] !=10) {
 		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
 		if(vec2d.size()<=3 || vec2d[0].size()<2 || vec2d[1].size()<2) break;
 		for(auto each_vec : vec2d) {
 			for(Item item : each_vec) {
 				if(item.getPlaceHolder()==1) items.push_back(item);
-			}
+				}
 			}
 		}
 
 	return items;
 }
 
-//std::vector<Item> Goto(std::vector<std::vector<Item>> vec2d) {
-//	std	
-//}
-//
+template<class T>
+std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
+	std::vector<T> com;
+	int size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
+	vec1.push_back(vec2[0]);
+	size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
+	std::cout << size << "\n";
+	for(int i=0;i<size;i++) {
+		if(vec1[i]!=vec2[i]) {
+			com.push_back(vec1[i]);
+			com.push_back(vec2[i]);
+		}
+		else com.push_back(vec2[i]);
+	}
+	return com;
+}
+
+std::vector<Item> Gt(std::vector<Item> vec) {
+	std::vector<Item> temp;
+	for(Item item : vec) {
+		temp = make_union(temp,vec);  // temp U vec
+	}
+	return temp;
+}
+
 #ifdef __main__ 
 int main() {
 	std::vector<int> vec = {3,3,7,3,7,3,3,3,7,3,3,3,3,7,3,3,7,3,7,3};

@@ -234,7 +234,8 @@ int main(int argc, const char **argv) {
 	auto items = AllItems(vec_lr);
 	auto items_ = First(items);
 	std::cout << "Items size  -> " << items.size() << "\n";
-	vis_lr_item(items_);
+	//vis_lr_item(items_);
+	std::cout <<  Gt(closure(items)).size() << "\n";
 	return 0;
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
 	//return 0;

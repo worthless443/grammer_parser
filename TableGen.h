@@ -54,6 +54,7 @@ public:
 	void reduce() { 
 		prod.lookahead = 10; //  resembles a List
 	}
+	bool operator==(Item item) {return placeholder == item.placeholder;}
 };
 
 std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end);
@@ -64,3 +65,4 @@ std::vector<int> create_identity(Stack<States<int>> stack);
 std::vector<std::vector<Item>> process(std::vector<int> vec);
 std::vector<Item> closure(std::vector<std::vector<Item>> vec2d);
 void vis_lr_item(std::vector<std::vector<Item>> vec2d);
+std::vector<Item> Gt(std::vector<Item> vec);
