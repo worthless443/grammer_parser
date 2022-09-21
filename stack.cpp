@@ -60,7 +60,9 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 }
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
-	while(tree!=NULL) {
+	while(tree->next1!=NULL) {
+		std::cout << tree->data_s << "\n";
+		if(tree->data_s ==  "(null)" && tree->next1->data_s == "\n" ) break;
 		if(tree->data_s != "(null)")  {
 			stack.push(tree->data_s);
 		}
@@ -76,7 +78,7 @@ std::vector<std::string> vectorize_stack_lr(char *name) {
 	std::vector<std::string> vec_lr;
 	tree = store_as_two_lookaheads(tree, name);
 	Stack<States<std::string>> stack_lr = skeleton_lr(tree);
-	free_tree(tree);
+	free_tree(tree); // leak for once please
 	while(stack_lr.size()>0) {
 		stack_lr++;
 		vec_lr.push_back(stack_lr.top().getstr());
@@ -230,16 +232,16 @@ int main(int argc, const char **argv) {
 	std::cout << "stats:\n\n";
 
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
-	std::vector<std::string> vec_values= vectorize_stack_values(buf);
+	std::vector<std::string> vec_values = vectorize_stack_values(buf); 
 	auto items = AllItems(vec_lr);
 	auto items_ = FirstRobust(items);
-	std::cout << "Items size  -> " << items_[0].size() << "\n";
+	//std::cout << "Items size  -> " << items_[0].size() << "\n";
 	auto gtitems = build_GtTable(items_);
 	vis_lr_item(gtitems);
 	//vis_lr_item(items_);
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
-	return 0;
 
+	//message fuck
 	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
 	
 	int res = eval_main(pair);

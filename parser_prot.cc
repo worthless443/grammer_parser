@@ -99,7 +99,6 @@ void free_tree(rule_t *r) {
 		free(r);
 		free_tree(r->next1);
 	}
-	
 }
 
 void print_tree(rule_t *tree, int i) {

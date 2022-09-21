@@ -155,11 +155,14 @@ std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
 }
 
 std::vector<Item> Gt(std::vector<Item> vec) {
-	std::vector<Item> temp = {vec[3]}; // a random index to start at
+	std::vector<Item> temp; 
+	std::cout << "nigger\n";
+	temp.push_back(vec[vec.size() -1]);
 	for(Item item : vec) {
 		size_t prevsize = temp.size();
 		temp = make_union(temp,vec);  // temp U vec	
 		size_t cursize = temp.size();
+		if(cursize>1000) break;
 		if(cursize-prevsize == 30) break;
 	}
 	return temp;
@@ -167,7 +170,18 @@ std::vector<Item> Gt(std::vector<Item> vec) {
 
 std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2d ) {
 	std::vector<std::vector<Item>> out;
-	for(auto vec : vec2d) out.push_back(Gt(vec));
+	for(auto vec : vec2d) {
+		if(vec.size()<1) {
+			std::cout << "got zero values\n";
+			return out;
+		}
+		std::cout << "nigger size " <<  out.size() << "\n";
+		if(out.size()>=7) {
+			std::cout << "Warning: Size is too big, quitting for now\n";
+			break;
+		}
+		out.push_back(Gt(vec));
+	}
 	return out;
 }
 
