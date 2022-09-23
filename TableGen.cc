@@ -76,12 +76,19 @@ std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 	return vec2d;
 }
 
-std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end) {
-		std::vector<std::vector<Item>> v;
+template<typename T>
+std::vector<T> Iter2VecT(typename std::vector<T>::iterator begin, typename std::vector<T>::iterator end) {
+		std::vector<T> v;
 		for(auto i = begin;i<end;i++) v.push_back(*i);
 		return v;
 	};
 
+
+std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end) {
+		std::vector<std::vector<Item>> v;
+		for(auto i = begin;i<end;i++) v.push_back(*i);
+		return v;
+}
 
 void decorate1(Item item) {
 	
@@ -140,6 +147,14 @@ std::vector<Item> closure(std::vector<std::vector<Item>> vec2d)  {
 }
 
 template<class T>
+std::vector<T> make_union_(std::vector<T> vec1, std::vector<T> &vec2) { 
+	int size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
+	for(auto iter=vec2.begin();iter<(vec2.begin() + 2);iter++) if(*++iter==*iter) vec1.push_back(*iter);
+	vec2 = Iter2VecT<Item>(vec2.begin()+2, vec2.end());
+	return vec1;
+}
+
+template<class T>
 std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
 	int size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
 	//std::cout << size << "\n";
@@ -159,6 +174,7 @@ std::vector<Item> Gt(std::vector<Item> vec) {
 	std::cout << "nigger\n";
 	temp.push_back(vec[vec.size() -1]);
 	for(Item item : vec) {
+		if(vec.size()==0) break;
 		size_t prevsize = temp.size();
 		temp = make_union(temp,vec);  // temp U vec	
 		size_t cursize = temp.size();
