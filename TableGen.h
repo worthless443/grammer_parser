@@ -67,3 +67,5 @@ std::vector<Item> closure(std::vector<std::vector<Item>> vec2d);
 void vis_lr_item(std::vector<std::vector<Item>> vec2d);
 std::vector<Item> Gt(std::vector<Item> vec);
 std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2d );
+std::vector<std::vector<Item>> iterate_vec2d(std::vector<std::vector<Item>> vec2d);
+

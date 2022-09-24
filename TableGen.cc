@@ -90,29 +90,44 @@ std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator
 		return v;
 }
 
+std::vector<std::vector<Item>> iterate_vec2d(std::vector<std::vector<Item>> vec2d) {
+	std::vector<std::vector<Item>> out;
+	int i =0;
+	while(vec2d.size() > 2) {
+		auto vtemp = Iter2Vec(vec2d.begin() , vec2d.end() - (vec2d.size()-2));
+		std::cout << closure(vtemp).size() << "\n";
+		out.push_back(closure(vtemp));
+		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
+		std::cout << vec2d.size() << "\n";
+	}
+	return out;
+}
+
+
 void decorate1(Item item) {
-	
-	if(item.getPlaceHolder() == 0) 
-		printf("A(%s) -> (%d)By\n", 
-				item.getContainer()[0] == 10 ? "List" : "Symbol"
-				, item.getPlaceHolder());
-		else if(item.getPlaceHolder() == 1) printf("A(%s) -> B(%d)y\n", 
-				item.getContainer()[0] == 10 ? "List" : "Symbol",
-				item.getPlaceHolder());
-		else if(item.getPlaceHolder() == 2) printf("A(%s) -> By(%d)\n", 
-					item.getContainer()[0] == 10 ? "List" : "Symbol",
+		for(int x : item.getContainer()) {
+			if (item.getPlaceHolder() == 0) 
+			printf("A(%s) -> (%d)By\n", 
+					x == 10 ? "List" : "Symbol"
+					, item.getPlaceHolder());
+			else if(item.getPlaceHolder() == 1) printf("A(%s) -> B(%d)y\n", 
+					x == 10 ? "List" : "Symbol",
 					item.getPlaceHolder());
+			else if(item.getPlaceHolder() == 2) printf("A(%s) -> By(%d)\n", 
+				x == 10 ? "List" : "Symbol",
+				item.getPlaceHolder());
+		}
 }
 
 void decorate2(Item item) {
 	if(item.getPlaceHolder() == 0) printf("A(%s) -> (%d)By\n", 
-						 "U_Symbol"
+						 item.getPlaceHolder() == 2 ? "U_List" : "U_Symbol"
 						, item.getPlaceHolder());
 				else if(item.getPlaceHolder() == 1) printf("A(%s) -> B(%d)y\n", 
-						 "U_Symbol",
+						 item.getPlaceHolder() == 2 ? "U_List" : "U_Symbol",
 						item.getPlaceHolder());
 				else if(item.getPlaceHolder() == 2) printf("A(%s) -> By(%d)\n", 
-						"U_Symbol",
+						 item.getPlaceHolder() == 2 ? "U_List" : "U_Symbol",
 						item.getPlaceHolder());
 }
 
@@ -129,19 +144,25 @@ void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 		printf("\n\n\n");
 	}
 }
-
+// The proper way make closure(), it should take a set of list of distinct items and return a list of items with placeholder 2 which is to mean that they are recognised
 // produces items with placeholder in the middle
 std::vector<Item> closure(std::vector<std::vector<Item>> vec2d)  {
 	std::vector<Item> items;
-	while(vec2d[0][0].getContainer()[0] !=10 && vec2d[1][0].getContainer()[0] !=10) {
-		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
-		if(vec2d.size()<=3 || vec2d[0].size()<2 || vec2d[1].size()<2) break;
+	int limit = 0;
+	 while(1) {
+		if(vec2d.size()<=1 || vec2d[0].size()<1 || vec2d[1].size()<1) break;
 		for(auto each_vec : vec2d) {
+			if(limit >= 1<<8) break;
+			limit++;
 			for(Item item : each_vec) {
-				if(item.getPlaceHolder()==1) items.push_back(item);
+				items.push_back(item);
+				//if(item.getPlaceHolder()==2) items.push_back(item);
 				}
+
 			}
-		}
+		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
+		 //if(vec2d[0][0].getContainer()[0] ==10 && vec2d[1][0].getContainer()[0] ==10) break; 
+	 }
 
 	return items;
 }
@@ -171,14 +192,13 @@ std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
 
 std::vector<Item> Gt(std::vector<Item> vec) {
 	std::vector<Item> temp; 
-	std::cout << "nigger\n";
 	temp.push_back(vec[vec.size() -1]);
 	for(Item item : vec) {
 		if(vec.size()==0) break;
 		size_t prevsize = temp.size();
 		temp = make_union(temp,vec);  // temp U vec	
 		size_t cursize = temp.size();
-		if(cursize>1000) break;
+		if(cursize>700) break;
 		if(cursize-prevsize == 30) break;
 	}
 	return temp;
@@ -191,7 +211,6 @@ std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2
 			std::cout << "got zero values\n";
 			return out;
 		}
-		std::cout << "nigger size " <<  out.size() << "\n";
 		if(out.size()>=7) {
 			std::cout << "Warning: Size is too big, quitting for now\n";
 			break;

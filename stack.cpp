@@ -61,7 +61,6 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree->next1!=NULL) {
-		std::cout << tree->data_s << "\n";
 		if(tree->data_s ==  "(null)" && tree->next1->data_s == "\n" ) break;
 		if(tree->data_s != "(null)")  {
 			stack.push(tree->data_s);
@@ -236,7 +235,8 @@ int main(int argc, const char **argv) {
 	auto items_ = First(items);
 	//std::cout << "Items size  -> " << items_[0].size() << "\n";
 	auto gtitems = build_GtTable(items_);
-	vis_lr_item(gtitems);
+	auto spitems = iterate_vec2d(gtitems);
+	vis_lr_item(spitems);
 	//vis_lr_item(items_);
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
 

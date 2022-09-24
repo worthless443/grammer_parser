@@ -11,7 +11,7 @@
 
 
 static char *filter_str(const char *sentence_) {
-	char *_sentence = (char*)malloc(sizeof(char)*strlen(sentence_));
+	char *_sentence = (char*)malloc(sizeof(char)*strlen(sentence_)*2);
 	strcpy(_sentence, sentence_);
 	for(int i=0;_sentence[i]!=0;i++) { 
 		if(_sentence[i]==" "[0]) _sentence[i] = 0x1;
@@ -49,7 +49,7 @@ rule_t  *mk_parse_paren(rule_t *rr, char *exp) {
 }
 
 static int *parse_string(const char *expr) {
-	int* vec = (int*)malloc(500000*sizeof(int));
+	int* vec = (int*)malloc(50*sizeof(int));
 	for(int i=0;i<strlen(expr);i++) {
 		int each = expr[i];
 		vec[i] = each;
@@ -69,7 +69,6 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	int *vec = parse_string(expr);
 	std::string comp((char*)&vec[0]);
 	size_t size = size_int_ptr(vec);
-	//std::cout <<  comp << "\n";
 	if(comp=="(") {
 		tree->param1_s = comp;
 		tree->param2_s  = "(null)";
@@ -87,14 +86,14 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	}
 
 	free(vec);
-	if(size==0) return tree;
+	if(size==2) return tree;
 	//if(vec.size()<2) return tree;
 	tree->next1 =  store_as_two_lookaheads(tree->next1, &(*(expr_.begin() + 1)));
 	return tree;
 }
 
 void free_tree(rule_t *r) {
-	if(r==NULL) return;
+	if(r->next1==NULL) return;
 	else {
 		free(r);
 		free_tree(r->next1);
