@@ -1,13 +1,16 @@
 CC=g++
-FLAGS=-std=c++20 -lfmt 
+CC1=clang++
+FLAGS=-std=c++20 -lfmt   -Werror
 INCLUDE=-I./
-OBJS=parser_prot.o TableGen.o eval.o
+OBJS=parser_prot.o TableGen.o eval.o ActionGen.o
 STACK=stack
-all: $(OBJS) $(STACK)
+LIB=libgram.a
+all: $(LIB) $(STACK)
 $(OBJS) : %.o : %.cc
 	$(CC) -c $(FLAGS) $(INCLUDE) $^ -o $@
-
+$(LIB): $(OBJS)
+	ar rcs $@ $^
 $(STACK): % : %.cpp
-	$(CC) $(FLAGS) $(INCLUDE) $^ $(OBJS)  -o $@
+	$(CC) $(FLAGS) $(INCLUDE) $^ $(LIB)  -o $@
 clean:
 	rm -rf *.o $(STACK)
