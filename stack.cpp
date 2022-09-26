@@ -16,6 +16,7 @@
 #include<eval.h>
 #include<stack.h>
 #include<TableGen.h>
+#include<ActionGen.h>
 
 std::vector<Item> Iter2Vec_Main(std::vector<Item>::iterator begin, std::vector<Item>::iterator end) {
 		std::vector<Item> v;
@@ -203,6 +204,12 @@ auto First(auto items) {
 	return itms;
 }
 
+void item_iter(std::vector<std::vector<Item>> vec2d) {
+	for(auto vec : vec2d) 
+		for(Item item : vec)
+			skLr(item.getContainer());
+}
+
 int main(int argc, const char **argv) {
 	if(argc<2)  {
 		std::cout << "no file provided\n";
@@ -236,7 +243,9 @@ int main(int argc, const char **argv) {
 	//std::cout << "Items size  -> " << items_[0].size() << "\n";
 	auto gtitems = build_GtTable(items_);
 	auto spitems = iterate_vec2d(gtitems);
-	vis_lr_item(spitems);
+	generate_derivation(gtitems);
+	return 0;
+	//vis_lr_item(spitems);
 	//vis_lr_item(items_);
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
 

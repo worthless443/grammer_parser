@@ -103,7 +103,6 @@ std::vector<std::vector<Item>> iterate_vec2d(std::vector<std::vector<Item>> vec2
 	return out;
 }
 
-
 void decorate1(Item item) {
 		for(int x : item.getContainer()) {
 			if (item.getPlaceHolder() == 0) 
@@ -131,6 +130,20 @@ void decorate2(Item item) {
 						item.getPlaceHolder());
 }
 
+void generate_derivation(std::vector<std::vector<Item>> vec2d)  {
+	long int x=0, y=0,dum=0;
+	std::string out;
+	for(auto vec : vec2d) {
+		for(Item item : vec) {
+			if(item.getPlaceHolder()==1) {
+				for(int x : item.getContainer())
+					out = out + std::string(x==1 ? "()"  : "(") + " ";
+			} 
+		}
+	}
+	std::cout << out << "\n";
+}
+
 void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 	for (auto vec : vec2d) {
 		// diversify it 
@@ -144,6 +157,7 @@ void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 		printf("\n\n\n");
 	}
 }
+
 // The proper way make closure(), it should take a set of list of distinct items and return a list of items with placeholder 2 which is to mean that they are recognised
 // produces items with placeholder in the middle
 std::vector<Item> closure(std::vector<std::vector<Item>> vec2d)  {
