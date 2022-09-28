@@ -69,3 +69,12 @@ std::vector<Item> Gt(std::vector<Item> vec);
 std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2d );
 std::vector<std::vector<Item>> iterate_vec2d(std::vector<std::vector<Item>> vec2d);
 void generate_derivation(std::vector<std::vector<Item>> vec2d);
+
+template<typename T>
+std::vector<T> Iter2VecT(typename std::vector<T>::iterator begin, typename std::vector<T>::iterator end) {
+		std::vector<T> v;
+		for(auto i = begin;i<end;i++) v.push_back(*i);
+		return v;
+	};
+
+

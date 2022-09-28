@@ -76,14 +76,6 @@ std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 	return vec2d;
 }
 
-template<typename T>
-std::vector<T> Iter2VecT(typename std::vector<T>::iterator begin, typename std::vector<T>::iterator end) {
-		std::vector<T> v;
-		for(auto i = begin;i<end;i++) v.push_back(*i);
-		return v;
-	};
-
-
 std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end) {
 		std::vector<std::vector<Item>> v;
 		for(auto i = begin;i<end;i++) v.push_back(*i);
@@ -108,26 +100,26 @@ void decorate1(Item item) {
 			if (item.getPlaceHolder() == 0) 
 			printf("A(%s) -> (%d)By\n", 
 					x == 10 ? "List" : "Symbol"
-					, item.getPlaceHolder());
+					, item.getLookahead());
 			else if(item.getPlaceHolder() == 1) printf("A(%s) -> B(%d)y\n", 
 					x == 10 ? "List" : "Symbol",
-					item.getPlaceHolder());
+					item.getLookahead());
 			else if(item.getPlaceHolder() == 2) printf("A(%s) -> By(%d)\n", 
 				x == 10 ? "List" : "Symbol",
-				item.getPlaceHolder());
+				item.getLookahead());
 		}
 }
 
 void decorate2(Item item) {
 	if(item.getPlaceHolder() == 0) printf("A(%s) -> (%d)By\n", 
 						 item.getPlaceHolder() == 2 ? "U_List" : "U_Symbol"
-						, item.getPlaceHolder());
+						, item.getLookahead());
 				else if(item.getPlaceHolder() == 1) printf("A(%s) -> B(%d)y\n", 
 						 item.getPlaceHolder() == 2 ? "U_List" : "U_Symbol",
-						item.getPlaceHolder());
+						item.getLookahead());
 				else if(item.getPlaceHolder() == 2) printf("A(%s) -> By(%d)\n", 
 						 item.getPlaceHolder() == 2 ? "U_List" : "U_Symbol",
-						item.getPlaceHolder());
+						item.getLookahead());
 }
 
 void generate_derivation(std::vector<std::vector<Item>> vec2d)  {
@@ -147,7 +139,7 @@ void generate_derivation(std::vector<std::vector<Item>> vec2d)  {
 void vis_lr_item(std::vector<std::vector<Item>> vec2d) {
 	for (auto vec : vec2d) {
 		// diversify it 
-		if(vec.size()<1) break;
+		//if(vec.size()<1) break;
 		for(Item item : vec) {
 			if(item.getList().first == item.getList().second) {
 				decorate1(item);
@@ -184,7 +176,7 @@ std::vector<Item> closure(std::vector<std::vector<Item>> vec2d)  {
 template<class T>
 std::vector<T> make_union_(std::vector<T> vec1, std::vector<T> &vec2) { 
 	int size = vec1.size() < vec2.size() ? vec1.size() : vec2.size();
-	for(auto iter=vec2.begin();iter<(vec2.begin() + 2);iter++) if(*++iter==*iter) vec1.push_back(*iter);
+	for(auto iter=vec2.begin();iter<(vec2.begin() + 2);iter++) if(*++iter==*iter) vec1.push_back(*iter); // i does not seem to distinct since all Items seem the same
 	vec2 = Iter2VecT<Item>(vec2.begin()+2, vec2.end());
 	return vec1;
 }
@@ -212,14 +204,14 @@ std::vector<Item> Gt(std::vector<Item> vec) {
 		size_t prevsize = temp.size();
 		temp = make_union(temp,vec);  // temp U vec	
 		size_t cursize = temp.size();
-		if(cursize>700) break;
+		if(cursize>700) break; // limit to what vector can hold, not a complete construction thus
 		if(cursize-prevsize == 30) break;
 	}
 	return temp;
 }
 
 std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2d ) {
-	std::vector<std::vector<Item>> out;
+	std::vector<std::vector<Item>> out_, out;
 	for(auto vec : vec2d) {
 		if(vec.size()<1) {
 			std::cout << "got zero values\n";
@@ -229,7 +221,8 @@ std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2
 			std::cout << "Warning: Size is too big, quitting for now\n";
 			break;
 		}
-		out.push_back(Gt(vec));
+		out_.push_back(Gt(vec));
+		out.push_back(closure(out_));
 	}
 	return out;
 }
