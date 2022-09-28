@@ -241,14 +241,16 @@ int main(int argc, const char **argv) {
 	auto items = AllItems(vec_lr);
 	auto items_ = First(items);
 	//std::cout << "Items size  -> " << items_[0].size() << "\n";
-	auto gtitems = build_GtTable(items_);
+	auto gtitems = build_GtTable(items);
 	auto spitems = iterate_vec2d(gtitems);
-	generate_derivation(gtitems);
-	return 0;
-	//vis_lr_item(spitems);
-	//vis_lr_item(items_);
+	ActionTable atbl = ActionGen(gtitems);
+	for(auto pair : atbl) {
+		printf("(%d,%d)\n",pair.first, pair.second);
+	}
+	//generate_derivation(gtitems);
+	//vis_lr_item(gtitems);
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
-
+	return 0;
 	//message fuck
 	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
 	
