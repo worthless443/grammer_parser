@@ -59,6 +59,21 @@ ActionTable ActionGen(std::vector<std::vector<Item>> items2d) {
 	return actions;
 }
 
+void ActionStates(std::vector<int> &states, std::pair<int,int> p) {
+	if(p.second == 0) states.push_back(1);
+	if(p.second==1) states.push_back(1);
+	if(p.second==2) states.push_back(-1);
+	if(states.size()>0) {
+		if(states[states.size()-1] == 1) states.push_back(0);
+		if(states[states.size()-1] == 0) states.push_back(0);
+	}
+	else{
+		states.push_back(0);
+	}
+	if(states[states.size()-1] == 0) states.push_back(1);
+	if(states[states.size()-1] == 1) states.push_back(1);
+}
+
 #ifdef __main__ 
 int main() {
 	skLr words{1,2,4,3,5,4,1,3,5,1,4};

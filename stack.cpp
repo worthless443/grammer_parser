@@ -243,10 +243,14 @@ int main(int argc, const char **argv) {
 	//std::cout << "Items size  -> " << items_[0].size() << "\n";
 	auto gtitems = build_GtTable(items);
 	auto spitems = iterate_vec2d(gtitems);
-	ActionTable atbl = ActionGen(gtitems);
+	ActionTable atbl = ActionGen(spitems);
+	std::vector<int> states;
 	for(auto pair : atbl) {
-		printf("(%d,%d)\n",pair.first, pair.second);
+		ActionStates(states, pair);
+		//printf("(%d,%d)\n",pair.first, pair.second);
 	}
+
+	//for(int st : states) std::cout << st << "\n";
 	//generate_derivation(gtitems);
 	//vis_lr_item(gtitems);
 	//for(int S : intVec(vec_lr)) std::cout << S << "\n";

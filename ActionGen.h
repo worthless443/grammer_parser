@@ -86,3 +86,4 @@ private:
 };
 
 ActionTable ActionGen(std::vector<std::vector<Item>> items2d);
+void ActionStates(std::vector<int> &states, std::pair<int,int> p);
