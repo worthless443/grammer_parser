@@ -245,11 +245,9 @@ int main(int argc, const char **argv) {
 	auto spitems = iterate_vec2d(gtitems);
 	ActionTable atbl = ActionGen(spitems);
 	std::vector<int> states;
-	for(auto pair : atbl) {
-		ActionStates(states, pair);
-		//printf("(%d,%d)\n",pair.first, pair.second);
-	}
-
+	Stack<int> stack;
+	states = ActionExec(stack, atbl);
+	stack.print();
 	//for(int st : states) std::cout << st << "\n";
 	//generate_derivation(gtitems);
 	//vis_lr_item(gtitems);
