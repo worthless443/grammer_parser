@@ -12,5 +12,7 @@ $(LIB): $(OBJS)
 	ar rcs $@ $^
 $(STACK): % : %.cpp
 	$(CC) $(FLAGS) $(INCLUDE) $^ $(LIB)  -o $@
+install:
+	cp $(STACK) /usr/bin/stack
 clean:
 	rm -rf *.o $(STACK)
