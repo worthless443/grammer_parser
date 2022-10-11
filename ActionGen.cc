@@ -74,12 +74,9 @@ void ActionStates(std::vector<int> &states, std::pair<int,int> p) {
 	if(states[states.size()-1] == 1) states.push_back(1);
 }
 
-std::vector<int> ActionExec(Stack<int> &stack, ActionTable p_vec) {
-	std::vector<int> vec;
+std::vector<int> ActionExec(std::vector<int> vec, Stack<int> &stack, ActionTable p_vec) {
 	int idx = 0;
-	for(auto pair : p_vec) ActionStates(vec, pair);
 	while(1) {
-		printf("%d %d %d\n", vec[idx], vec[idx+1], vec[idx+2]);
 		if(vec[idx]==0) stack.push(3);
 		else if(vec[idx]==1) stack.push(5);
 		if(vec[idx]==1 && vec[idx + 1] == 1 && vec[idx+2]==-1) {
@@ -87,9 +84,23 @@ std::vector<int> ActionExec(Stack<int> &stack, ActionTable p_vec) {
 		}
 		idx+=1;
 	}
-	return Iter2VecT<int>(vec.begin() + idx, vec.end());
+	return Iter2VecT<int>(vec.begin() + idx + 1, vec.end());
 }
 
+int TimesAction(ActionTable p_vec) {
+	int times = 0;
+	std::vector<int> vec;
+	Stack<int> stack;
+	for(auto pair : p_vec) ActionStates(vec, pair);
+	vec = ActionExec(vec, stack, p_vec);
+	vec = ActionExec(vec, stack, p_vec);
+	while(vec.size()>1) {
+		std::cout << vec.size() << "\n";
+		vec = ActionExec(vec, stack,p_vec);
+		times++;
+	}
+	return times;
+}
 #ifdef __main__ 
 int main() {
 	skLr words{1,2,4,3,5,4,1,3,5,1,4};

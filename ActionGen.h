@@ -87,4 +87,5 @@ private:
 
 ActionTable ActionGen(std::vector<std::vector<Item>> items2d);
 void ActionStates(std::vector<int> &states, std::pair<int,int> p);
-std::vector<int> ActionExec(Stack<int> &stack, ActionTable p_vec);
+std::vector<int> ActionExec(std::vector<int>, Stack<int> &stack, ActionTable p_vec);
+int TimesAction(ActionTable p_vec);
