@@ -241,6 +241,7 @@ int main(int argc, const char **argv) {
 	auto items = AllItems(vec_lr);
 	auto items_ = First(items);
 	//std::cout << "Items size  -> " << items_[0].size() << "\n";
+	//auto gtitems_ = build_GtTable1D(items_);
 	auto gtitems = build_GtTable(items);
 	auto spitems = iterate_vec2d(gtitems);
 	ActionTable atbl = ActionGen(spitems);

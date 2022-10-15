@@ -19,6 +19,7 @@ class Item {
 	};
 	Production prod;
 	std::vector<int> container;
+	int dstict;
 public:
 	Item(int lookahead, int direction=0) :  prod{.direction = direction, .lookahead = lookahead}, placeholder(0) { }
 
@@ -54,7 +55,8 @@ public:
 	void reduce() { 
 		prod.lookahead = 10; //  resembles a List
 	}
-	bool operator==(Item item) {return placeholder == item.placeholder;}
+	void make_dstict(int ds) {dstict = ds;}
+	bool operator==(Item item) {return dstict == item.dstict;}
 };
 
 std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end);
@@ -69,7 +71,8 @@ std::vector<Item> Gt(std::vector<Item> vec);
 std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2d );
 std::vector<std::vector<Item>> iterate_vec2d(std::vector<std::vector<Item>> vec2d);
 void generate_derivation(std::vector<std::vector<Item>> vec2d);
-
+std::vector<Item> Convert2D(std::vector<std::vector<Item>> vec2d);
+std::vector<std::vector<Item>> build_GtTable1D(std::vector<std::vector<Item>> vec2d );
 template<typename T>
 std::vector<T> Iter2VecT(typename std::vector<T>::iterator begin, typename std::vector<T>::iterator end) {
 		std::vector<T> v;

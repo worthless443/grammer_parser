@@ -1,10 +1,11 @@
 CC=g++
 CC1=clang++
-FLAGS=-std=c++20 -lfmt   -Werror
-INCLUDE=-I./
-OBJS=parser_prot.o TableGen.o eval.o ActionGen.o
-STACK=stack
-LIB=libgram.a
+FLAGS= -std=c++20 -Werror
+LINK= -lfmt
+INCLUDE= -I./
+OBJS= parser_prot.o TableGen.o eval.o ActionGen.o
+STACK= stack
+LIB= libgram.a
 all: $(LIB) $(STACK)
 $(OBJS) : %.o : %.cc
 	$(CC) -c $(FLAGS) $(INCLUDE) $^ -o $@
@@ -13,6 +14,7 @@ $(LIB): $(OBJS)
 $(STACK): % : %.cpp
 	$(CC) $(FLAGS) $(INCLUDE) $^ $(LIB)  -o $@
 install:
-	cp $(STACK) /usr/bin/stack
+	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	cp -f $(STACK) $(DESTDIR)$(PREFIX)/bin/$(STACK)
 clean:
-	rm -rf *.o $(STACK)
+	rm -rf *.o $(STACK) *.a

@@ -95,7 +95,6 @@ int TimesAction(ActionTable p_vec) {
 	vec = ActionExec(vec, stack, p_vec);
 	vec = ActionExec(vec, stack, p_vec);
 	while(vec.size()>1) {
-		std::cout << vec.size() << "\n";
 		vec = ActionExec(vec, stack,p_vec);
 		times++;
 	}

@@ -52,10 +52,12 @@ std::vector<int> create_identity(Stack<States<int>> stack) {
 
 std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 	std::vector<std::vector<Item>> vec2d;
+	int dstict = 0;
 	for(int i=0;i<vec.size();i+=2) {
 		std::vector<Item> vec_item;
 		Item item(-1);
 		while(true) {
+			 item.make_dstict(dstict);
 			 if(vec[i] != vec[i+1]) {
 				item.stackUpCurrent(10);
 				item.makeList(vec[i],vec[i+1]);
@@ -69,6 +71,7 @@ std::vector<std::vector<Item>> process(std::vector<int> vec)  {
 			 }
 			 item.placehold();
 			 if(item.getPlaceHolder()==3) break;
+			 dstict++;
 		}
 		vec2d.push_back(vec_item);
 	}
@@ -195,14 +198,20 @@ std::vector<T> make_union(std::vector<T> vec1, std::vector<T> vec2) {
 	}
 	return vec1;
 }
-
+std::vector<Item> Convert2D(std::vector<std::vector<Item>> vec2d) {
+	std::vector<Item> items;
+	for(auto vec : vec2d) for(Item item : vec) items.push_back(item);
+	return items;
+}
 std::vector<Item> Gt(std::vector<Item> vec) {
 	std::vector<Item> temp; 
 	temp.push_back(vec[vec.size() -1]);
 	for(Item item : vec) {
 		if(vec.size()==0) break;
 		size_t prevsize = temp.size();
-		temp = make_union(temp,vec);  // temp U vec	
+		auto temp_ = make_union(temp,vec);
+		temp.insert(temp.end(),temp_.begin(),temp_.end());  // temp -> temp_ U vec	
+		printf("vec size %ld\n", temp.size());
 		size_t cursize = temp.size();
 		if(cursize>700) break; // limit to what vector can hold, not a complete construction thus
 		if(cursize-prevsize == 30) break;
@@ -225,6 +234,20 @@ std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2
 		out.push_back(closure(out_));
 	}
 	return out;
+}
+
+std::vector<std::vector<Item>> build_GtTable1D(std::vector<std::vector<Item>> vec2d ) {
+	std::vector<std::vector<Item>> items2d, out2d;
+	int count = 0;
+	auto vec = Convert2D(vec2d);
+	for(Item item : vec) {
+		items2d.push_back(vec);
+		if(item.getPlaceHolder()==2) out2d.push_back(Gt(closure(items2d)));
+		//count++;
+		//std::cout << "count at " << count << "\n";
+
+	}
+	return out2d;
 }
 
 #ifdef __main__ 
