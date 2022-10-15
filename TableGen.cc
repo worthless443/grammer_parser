@@ -221,15 +221,17 @@ std::vector<Item> Gt(std::vector<Item> vec) {
 
 std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2d ) {
 	std::vector<std::vector<Item>> out_, out;
+	int count = 0;
 	for(auto vec : vec2d) {
 		if(vec.size()<1) {
 			std::cout << "got zero values\n";
 			return out;
 		}
-		if(out.size()>=7) {
-			std::cout << "Warning: Size is too big, quitting for now\n";
-			break;
-		}
+		//if(out.size()>=7) {
+		//	std::cout << "Warning: Size is too big, quitting for now\n";
+		//	break;
+		//}
+		printf("count at %d\n", ++count);
 		out_.push_back(Gt(vec));
 		out.push_back(closure(out_));
 	}
@@ -243,9 +245,6 @@ std::vector<std::vector<Item>> build_GtTable1D(std::vector<std::vector<Item>> ve
 	for(Item item : vec) {
 		items2d.push_back(vec);
 		if(item.getPlaceHolder()==2) out2d.push_back(Gt(closure(items2d)));
-		//count++;
-		//std::cout << "count at " << count << "\n";
-
 	}
 	return out2d;
 }
