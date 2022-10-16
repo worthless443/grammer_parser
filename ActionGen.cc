@@ -77,6 +77,7 @@ void ActionStates(std::vector<int> &states, std::pair<int,int> p) {
 std::vector<int> ActionExec(std::vector<int> vec, Stack<int> &stack, ActionTable p_vec) {
 	int idx = 0;
 	while(1) {
+
 		if(vec[idx]==0) stack.push(3);
 		else if(vec[idx]==1) stack.push(5);
 		if(vec[idx]==1 && vec[idx + 1] == 1 && vec[idx+2]==-1) {
@@ -95,8 +96,8 @@ int TimesAction(ActionTable p_vec) {
 	vec = ActionExec(vec, stack, p_vec);
 	vec = ActionExec(vec, stack, p_vec);
 	while(vec.size()>1) {
+		printf("count till converge %d\n", ++times);
 		vec = ActionExec(vec, stack,p_vec);
-		times++;
 	}
 	return times;
 }
