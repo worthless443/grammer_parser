@@ -9,13 +9,12 @@
 #include<iostream>
 #include<vector>
 
-
-static char *filter_str(const char *sentence_) {
-	char *_sentence = (char*)malloc(sizeof(char)*strlen(sentence_)*2);
-	strcpy(_sentence, sentence_);
-	for(int i=0;_sentence[i]!=0;i++) { 
-		if(_sentence[i]==" "[0]) _sentence[i] = 0x1;
+static std::string filter_str(const char *sentence_) {
+	char *sen = (char*)sentence_;
+	for(int i=0;sen[i]!=0;i++) { 
+		if(sen[i]==" "[0]) sen[i] = 0x1;
 	}
+	std::string _sentence(sen);
 	return _sentence;
 }
 //printf("catched\n");
@@ -64,8 +63,8 @@ size_t size_int_ptr(int *vec) {
 }
 rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	tree = new rule_t;
-	expr = filter_str(expr);
-	std::string expr_(expr) ;
+	std::string _expr = filter_str(expr);
+	std::string expr_(_expr) ;
 	int *vec = parse_string(expr);
 	std::string comp((char*)&vec[0]);
 	size_t size = size_int_ptr(vec);
@@ -123,10 +122,10 @@ void print_test(rule_t *r, rule_t **path_mem = NULL, int level=0) {
 #ifdef __main__ 
 int main(int argc, char **argv) {
 	if(argc<2) return -1;
-	char *fuck = filter_str(argv[1]);
+	std::string fuck = filter_str(argv[1]);
 	
 	rule_t *tree = NULL;
-	rule_t *tree_ =store_as_two_lookaheads(tree, fuck);
+	rule_t *tree_ =store_as_two_lookaheads(tree, fuck.c_str());
 	print_tree(tree_);
 	//rule_t *rr; //, 
 	//rule_t *r = mk_parse_paren(rr, fuck);
