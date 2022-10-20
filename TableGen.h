@@ -22,7 +22,7 @@ class Item {
 	int dstict;
 public:
 	Item(int lookahead, int direction=0) :  prod{.direction = direction, .lookahead = lookahead}, placeholder(0) { }
-
+	Item() = delete;
 	void stackUpCurrent(int i) {
 		container.push_back(i);
 	}

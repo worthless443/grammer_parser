@@ -7,6 +7,8 @@
 #include<iterator>
 #include<utility>
 #include<regex>
+#include<thread>
+#include<functional>
 
 #include<cstring>
 #include<cstdlib>
@@ -204,6 +206,31 @@ auto First(auto items) {
 	return itms;
 }
 
+template<class T>
+std::vector<T> splitVector(T vec2d) {
+	std::vector<T> vec2d_split;
+	T vec_tmp;
+	size_t size = vec2d.size()/16; // later replace with threads num invovked by system check
+	for(int i=0,k=0;i<vec2d.size();i++,k++) {
+		vec_tmp.push_back(vec2d[i]);
+		if(k==size) {
+			vec2d_split.push_back(vec_tmp);
+			vec_tmp.clear();
+			k=0;
+		}
+	}
+	return vec2d_split;
+}
+template<class T>
+std::vector<std::thread> makeThreads(T vec_split) {
+	std::vector<std::thread> ths;
+	for(int i=0;i<4;i++) {
+		auto atab = ActionGen(vec_split[i]);
+		ths.push_back(std::thread(TimesAction,std::ref(atab)));
+	}
+	return ths;
+}
+
 void item_iter(std::vector<std::vector<Item>> vec2d) {
 	for(auto vec : vec2d) 
 		for(Item item : vec)
@@ -244,9 +271,18 @@ int main(int argc, const char **argv) {
 	//auto gtitems_ = build_GtTable1D(items_);
 	auto gtitems = build_GtTable(items);
 	auto spitems = iterate_vec2d(gtitems);
-	ActionTable atbl = ActionGen(spitems);
-	Stack<int> stack;
-	std::cout << "times action "  << TimesAction(atbl) << "\n";
+	auto v_split =  splitVector(spitems);
+	//auto threads = makeThreads(Iter2VecT<std::vector<std::vector<Item>>>(v_split.begin()+1,v_split.end()));
+	std::vector<std::thread> th;
+	for(auto t : v_split) {
+		th.push_back(std::thread(TimesAction, ActionGen(t)));
+	}
+	
+	for(auto &t : th ) t.join();
+	//for(int i=0;i<16;i++) threads[i].join();
+	//ActionTable atbl = ActionGen(spitems);
+	//Stack<int> stack;
+	//std::cout << "times action "  << TimesAction(atbl) << "\n";
 	//stack.print();
 	//for(int st : states) std::cout << st << "\n";
 	//generate_derivation(gtitems);
