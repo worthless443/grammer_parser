@@ -9,6 +9,7 @@
 #include<regex>
 #include<thread>
 #include<functional>
+#include<future>
 
 #include<cstring>
 #include<cstdlib>
@@ -210,7 +211,7 @@ template<class T>
 std::vector<T> splitVector(T vec2d) {
 	std::vector<T> vec2d_split;
 	T vec_tmp;
-	size_t size = vec2d.size()/16; // later replace with threads num invovked by system check
+	size_t size = vec2d.size()/4; // later replace with threads num invovked by system check
 	for(int i=0,k=0;i<vec2d.size();i++,k++) {
 		vec_tmp.push_back(vec2d[i]);
 		if(k==size) {
@@ -221,8 +222,7 @@ std::vector<T> splitVector(T vec2d) {
 	}
 	return vec2d_split;
 }
-template<class T>
-std::vector<std::thread> makeThreads(T vec_split) {
+template<class T> std::vector<std::thread> makeThreads(T vec_split) {
 	std::vector<std::thread> ths;
 	for(int i=0;i<4;i++) {
 		auto atab = ActionGen(vec_split[i]);
@@ -237,6 +237,28 @@ void item_iter(std::vector<std::vector<Item>> vec2d) {
 			skLr(item.getContainer());
 }
 
+template<class T> std::promise<T> set_promise(T value) {
+	std::promise<T> rep;
+	rep.set_value(value);
+	return rep;
+}
+void work(std::promise<int> &&p, std::vector<std::vector<Item>> spitems) {
+	int bth = TimesAction(ActionGen(spitems));
+	p.set_value(bth);
+}
+
+int parall_thread(std::vector<std::vector<std::vector<Item>>> v_split) {
+	std::vector<std::thread> th;
+	int actions = 0;
+	for(auto t : v_split) {
+	      std::promise<int> p;
+	      auto fu = p.get_future();
+	      th.push_back(std::thread(work, std::move(p), t));
+	      th[th.size() -1].join();
+	      actions+=fu.get();
+	}
+	return actions;
+}
 int main(int argc, const char **argv) {
 	if(argc<2)  {
 		std::cout << "no file provided\n";
@@ -273,17 +295,8 @@ int main(int argc, const char **argv) {
 	auto spitems = iterate_vec2d(gtitems);
 	auto v_split =  splitVector(spitems);
 	//auto threads = makeThreads(Iter2VecT<std::vector<std::vector<Item>>>(v_split.begin()+1,v_split.end()));
-	std::vector<std::thread> th;
-	for(auto t : v_split) {
-		th.push_back(std::thread(TimesAction, ActionGen(t)));
-	}
-	
-	for(auto &t : th ) t.join();
-	//for(int i=0;i<16;i++) threads[i].join();
-	//ActionTable atbl = ActionGen(spitems);
-	//Stack<int> stack;
-	//std::cout << "times action "  << TimesAction(atbl) << "\n";
-	//stack.print();
+	int actions = parall_thread(v_split);
+	std::cout << "times action " <<  actions << "\n";
 	//for(int st : states) std::cout << st << "\n";
 	//generate_derivation(gtitems);
 	//vis_lr_item(gtitems);

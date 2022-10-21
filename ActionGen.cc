@@ -8,6 +8,7 @@
 #include<utility>
 #include<regex>
 #include <initializer_list>
+#include<future>
 
 #include<cstring>
 #include<cstdlib>
@@ -51,8 +52,9 @@ ActionTable ActionGen(std::vector<std::vector<Item>> items2d) {
 	for(auto vec : items2d) {
 		for(Item item : vec) {
 			if(item.getPlaceHolder()==0) actions[idx] = Shift;
-			if(item.getPlaceHolder()==1) actions[idx] = Reduce ;
-			if(item.getPlaceHolder()==2) actions[idx] = Accept ;
+			else if(item.getPlaceHolder()==1) actions[idx] = Reduce ;
+			else if(item.getPlaceHolder()==2) actions[idx] = Accept ;
+			else actions[idx] = Fail;
 			idx++;
 		}
 	}
@@ -76,25 +78,28 @@ void ActionStates(std::vector<int> &states, std::pair<int,int> p) {
 
 std::vector<int> ActionExec(std::vector<int> vec, Stack<int> &stack, ActionTable p_vec) {
 	int idx = 0;
-	while(1) {
+	if(vec.size() > 0) {
+		while(1) {
 
-		if(vec[idx]==0) stack.push(3);
-		else if(vec[idx]==1) stack.push(5);
-		if(vec[idx]==1 && vec[idx + 1] == 1 && vec[idx+2]==-1) {
-			break;
+			if(vec[idx]==0) stack.push(3);
+			else if(vec[idx]==1) stack.push(5);
+			if(vec[idx]==1 && vec[idx + 1] == 1 && vec[idx+2]==-1) {
+				break;
+			}
+			idx+=1;
 		}
-		idx+=1;
 	}
 	return Iter2VecT<int>(vec.begin() + idx + 1, vec.end());
 }
 
 int TimesAction(ActionTable p_vec) {
+	//ActionTable p_vec = rep.get_future().get();
 	int times = 0;
 	std::vector<int> vec;
 	Stack<int> stack;
 	for(auto pair : p_vec) ActionStates(vec, pair);
 	vec = ActionExec(vec, stack, p_vec);
-	vec = ActionExec(vec, stack, p_vec);
+
 	while(vec.size()>1) {
 		printf("count till converge %d\n", ++times);
 		vec = ActionExec(vec, stack,p_vec);
