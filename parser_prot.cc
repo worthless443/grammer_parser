@@ -6,6 +6,7 @@
 #include<parser_prot.h>
 
 #include<string>
+#include<regex>
 #include<iostream>
 #include<vector>
 
@@ -55,7 +56,21 @@ static int *parse_string(const char *expr) {
 	}
 	return vec;
 }
+static int checkfor_eval_regex(const char *s) {
+	int times = 0;
+	std::vector<std::string> str_v;
+	for(int i=0;i<strlen(s);++i) str_v.push_back(std::string(&(*(s + i))));
+	std::regex r("[()]");
+	for(auto str : str_v) times+=std::regex_match(str, r);
+	return times;
+}
 
+int checkfor_eval(const char *s) {
+	int times;
+	for(int i=0;i<strlen(s);++i) if(*(s+i)!='(' || *(s+i)!=')') ++times;
+	times+=checkfor_eval_regex(s);
+	return times;
+}
 size_t size_int_ptr(int *vec) {
 	size_t size;
 	for(size=0;*(vec+size);size++);
