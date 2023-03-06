@@ -59,17 +59,23 @@ static int *parse_string(const char *expr) {
 static int checkfor_eval_regex(const char *s) {
 	int times = 0;
 	std::vector<std::string> str_v;
-	for(int i=0;i<strlen(s);++i) str_v.push_back(std::string(&(*(s + i))));
-	std::regex r("[()]");
-	for(auto str : str_v) times+=std::regex_match(str, r);
+	for(int i=0;i<strlen(s);++i) {
+		char _tmp = *(s + i);
+		str_v.push_back(std::string(&_tmp));
+	}
+	std::regex r("\(");
+	for(auto str : str_v) { 
+		times+=std::regex_match(std::string("("), r);
+		std::cout << times << "\n";
+	}
 	return times;
 }
 
 int checkfor_eval(const char *s) {
-	int times;
-	for(int i=0;i<strlen(s);++i) if(*(s+i)!='(' || *(s+i)!=')') ++times;
-	times+=checkfor_eval_regex(s);
-	return times;
+	int times = 0;
+	for(int i=0;i<strlen(s);++i) 
+		if(*(s+i)=='(' || *(s+i)==')' || *(s+i)==' ') ++times;
+	return strlen(s) - times - 1;
 }
 size_t size_int_ptr(int *vec) {
 	size_t size;
@@ -77,6 +83,7 @@ size_t size_int_ptr(int *vec) {
 	return size;
 }
 rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
+	int i = 0;
 	tree = new rule_t;
 	std::string _expr = filter_str(expr);
 	std::string expr_(_expr) ;
@@ -100,8 +107,11 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	}
 
 	free(vec);
-	if(size==2) return tree;
-	//if(vec.size()<2) return tree;
+	if(size==2) {
+		tree->next1 = NULL;
+		return tree;
+	}
+	std::cout << i << "\n";
 	tree->next1 =  store_as_two_lookaheads(tree->next1, &(*(expr_.begin() + 1)));
 	return tree;
 }

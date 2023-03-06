@@ -65,6 +65,7 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree->next1!=NULL) {
+		std::cout << tree->data_s << "\n";
 		if(tree->data_s ==  "(null)" && tree->next1->data_s == "\n" ) break;
 		if(tree->data_s != "(null)")  {
 			stack.push(tree->data_s);
@@ -267,9 +268,13 @@ int main(int argc, const char **argv) {
 	char *buf = (char*)malloc(10000* sizeof(char));
 	FILE *f = fopen(argv[1], "r");
 	char shortbuf[1];
-	int rec = 0, normal = 0;
+	int rec = 0, normal = 0, chk_val;
 	while(fread(shortbuf, 1,1,f)) {
 		strcat(buf,shortbuf);
+	}
+	if((chk_val=checkfor_eval((const char*)buf))>0) { 
+		fprintf(stderr, "the parser doesn't support other chars(got %d)\n", chk_val);
+		return 1;
 	}
 	if(!actions(buf)) { 
 		std::cout << "Normal:extra parms\n";
