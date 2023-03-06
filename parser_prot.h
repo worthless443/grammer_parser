@@ -12,3 +12,4 @@ rule_t  *mk_parse_paren(rule_t *rr, char *exp);
 rule_t *store_as_two_lookaheads(rule_t *tree, char *expr);
 void free_tree(rule_t *r);
 void print_tree(rule_t *tree, int i=0);
+int checkfor_eval(const char *s);
