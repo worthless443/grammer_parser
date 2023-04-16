@@ -66,7 +66,6 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree->next1!=NULL) {
-		std::cout << tree->data_s << "\n";
 		if(tree->data_s ==  "(null)" && tree->next1->data_s == "\n" ) break;
 		if(tree->data_s != "(null)")  {
 			stack.push(tree->data_s);
