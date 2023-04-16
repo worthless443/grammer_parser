@@ -1,3 +1,6 @@
+ifdef DEBUG
+	DEBUG_GDB=-ggdb3
+endif
 CC=g++
 CC1=clang++
 FLAGS= -std=c++20 -Werror
@@ -15,7 +18,7 @@ endif
 
 all: $(LIB) parser
 $(OBJS) : %.o : %.cc
-	$(CC) -c $(FLAGS) $(INCLUDE) $^ -o $@
+	$(CC) -c $(FLAGS) $(INCLUDE) $^ -o $@  
 $(LIB): $(OBJS)
 	ar rcs $@ $^
 parser: $(MAIN)
