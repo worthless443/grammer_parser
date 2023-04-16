@@ -66,7 +66,6 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree->next1!=NULL) {
-		std::cout << tree->data_s << "\n";
 		if(tree->data_s ==  "(null)" && tree->next1->data_s == "\n" ) break;
 		if(tree->data_s != "(null)")  {
 			stack.push(tree->data_s);
@@ -303,27 +302,28 @@ int _parall_thread(std::vector<std::vector<std::vector<Item>>> v_split) {
 std::vector<std::vector<std::vector<Item>>> 
 serialize_count_8(std::vector<std::vector<std::vector<Item>>> v3d) {
 	std::vector<std::vector<std::vector<Item>>> out3d;
-	int tcount = THREAD/4;
 	for(auto v2d : v3d)	{
 		std::vector<std::vector<Item>> out2d;
+		int tcount = THREAD/2;
 		for(int i=0;i<v2d.size();++i) {
 			out2d.push_back(v2d[i]);
-			if(i == v2d.size()/4) {
+			if(i == v2d.size()/tcount) {
 				out3d.push_back(out2d);
 				out2d.clear();
+				if(tcount>=1) tcount/=2;
 			}
-			if(i == v2d.size() * 3/4) {
-				out3d.push_back(out2d);
-				out2d.clear();
-			}
-			if(i == v2d.size()/2) {
-				out3d.push_back(out2d);
-				out2d.clear();
-			}
-			if(i == v2d.size() - 1) {
-				out3d.push_back(out2d);
-				out2d.clear();
-			}
+			//if(i == v2d.size() * 3/4) {
+			//	out3d.push_back(out2d);
+			//	out2d.clear();
+			//}
+			//if(i == v2d.size()/2) {
+			//	out3d.push_back(out2d);
+			//	out2d.clear();
+			//}
+			//if(i == v2d.size() - 1) {
+			//	out3d.push_back(out2d);
+			//	out2d.clear();
+			//}
 		}
 	}
 	return out3d;
