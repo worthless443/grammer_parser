@@ -100,10 +100,9 @@ int TimesAction(ActionTable p_vec) {
 	for(auto pair : p_vec) ActionStates(vec, pair);
 	vec = ActionExec(vec, stack, p_vec);
 
-	while(vec.size()>1) {
-		printf("count till converge %d\n", ++times);
+	for(;vec.size()>1;++times) 
 		vec = ActionExec(vec, stack,p_vec);
-	}
+	
 	return times;
 }
 #ifdef __main__ 

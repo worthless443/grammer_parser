@@ -15,11 +15,12 @@
 #include<cstdlib>
 
 #include<parser_prot.h>
-#include<decorate_error.h>
 #include<eval.h>
 #include<stack.h>
 #include<TableGen.h>
 #include<ActionGen.h>
+
+#include<fmt/core.h>
 
 std::vector<Item> Iter2Vec_Main(std::vector<Item>::iterator begin, std::vector<Item>::iterator end) {
 		std::vector<Item> v;
@@ -242,49 +243,102 @@ template<class T> std::promise<T> set_promise(T value) {
 	rep.set_value(value);
 	return rep;
 }
-void work(std::promise<int> &&p, std::vector<std::vector<Item>> spitems) {
-	int bth = TimesAction(ActionGen(spitems));
-	p.set_value(bth);
+int work(std::promise<int> &&p, std::vector<std::vector<Item>> spitems) {
+	return TimesAction(ActionGen(spitems));
+}
+void n_work(std::vector<std::vector<Item>> spitems, int *ret) {
+	*ret = TimesAction(ActionGen(spitems));
+}
+
+void single_work(std::vector<std::vector<Item>> spitems, int *ret) {
+	*ret = TimesAction(ActionGen(spitems));
 }
 
 int parall_thread(std::vector<std::vector<std::vector<Item>>> v_split) {
 	std::vector<std::thread> th;
-	int actions = 0;
+	int actions = 0,action;
 	for(auto t : v_split) {
 	      std::promise<int> p;
 	      auto fu = p.get_future();
 	      th.push_back(std::thread(work, std::move(p), t));
 	      th[th.size() -1].join();
-	      actions+=fu.get();
+		  action = fu.get();
+	      actions+=action;
+		  fmt::print("executed action: {}\n",action);
 	}
 	return actions;
 }
-int main(int argc, const char **argv) {
-	if(argc<2)  {
-		std::cout << "no file provided\n";
-		return 1;
-	}
-	char *buf = (char*)malloc(10000* sizeof(char));
-	FILE *f = fopen(argv[1], "r");
-	char shortbuf[1];
-	int rec = 0, normal = 0;
-	while(fread(shortbuf, 1,1,f)) {
-		strcat(buf,shortbuf);
-	}
-	if(!actions(buf)) { 
-		std::cout << "Normal:extra parms\n";
-		normal += 1;
-	}
-	else std::cout << "Normal:success\n";
-	if(rec_actions(buf)) {
-		std::cout << "Recrusive:extra parms\n";
-		rec += 1;
-	}
-	else std::cout << "Recrusive:success\n";
-	std::cout << "\n\n\n";
 
-	std::cout << "stats:\n\n";
+int work_(int i,int *ac) {
+	for(int j=0;j<10;++j){
+	for(int i=0;i<100000000;++i);
+	for(int i=0;i<100000000;++i);
+	for(int i=0;i<100000000;++i);
+	for(int i=0;i<100000000;++i);
+	}
+	*ac = i;
+	std::cout << i << "\n";
+	return 1;
+}
 
+int _parall_thread(std::vector<std::vector<std::vector<Item>>> v_split) {
+	std::vector<std::thread> th;
+	int actions = 0,action,i=0;
+	for(auto t : v_split) {
+	      //auto fu = p.get_future();
+	      th.push_back(std::thread(n_work,t,&action));
+		  //action = fu.get();
+	      //actions+=action; 
+		  fmt::print("started thread {}\n",++i);
+	}
+	for(auto &t : th) {
+		t.join();
+		fmt::print("action: {}\n",action);
+		actions+=action;
+	}
+
+	return actions;
+}
+std::vector<std::vector<std::vector<Item>>> 
+serialize_count_8(std::vector<std::vector<std::vector<Item>>> v3d) {
+	std::vector<std::vector<std::vector<Item>>> out3d;
+	int tcount = THREAD/4;
+	for(auto v2d : v3d)	{
+		std::vector<std::vector<Item>> out2d;
+		for(int i=0;i<v2d.size();++i) {
+			out2d.push_back(v2d[i]);
+			if(i == v2d.size()/4) {
+				out3d.push_back(out2d);
+				out2d.clear();
+			}
+			if(i == v2d.size() * 3/4) {
+				out3d.push_back(out2d);
+				out2d.clear();
+			}
+			if(i == v2d.size()/2) {
+				out3d.push_back(out2d);
+				out2d.clear();
+			}
+			if(i == v2d.size() - 1) {
+				out3d.push_back(out2d);
+				out2d.clear();
+			}
+		}
+	}
+	return out3d;
+}
+
+int single_thread(std::vector<std::vector<std::vector<Item>>> v_split) {
+	int actions = 0,action;
+	for(auto t : v_split) {
+	      single_work(t,&action);
+	      actions+=action;
+		  fmt::print("executed action: {}\n",action);
+	}
+	return actions;
+}
+
+void get_split_vec(char *buf, struct ParseParam &sp) {
 	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
 	std::vector<std::string> vec_values = vectorize_stack_values(buf); 
 	auto items = AllItems(vec_lr);
@@ -294,37 +348,8 @@ int main(int argc, const char **argv) {
 	auto gtitems = build_GtTable(items);
 	auto spitems = iterate_vec2d(gtitems);
 	auto v_split =  splitVector(spitems);
-	//auto threads = makeThreads(Iter2VecT<std::vector<std::vector<Item>>>(v_split.begin()+1,v_split.end()));
-	int actions = parall_thread(v_split);
-	std::cout << "times action " <<  actions << "\n";
-	//for(int st : states) std::cout << st << "\n";
-	//generate_derivation(gtitems);
-	//vis_lr_item(gtitems);
-	//for(int S : intVec(vec_lr)) std::cout << S << "\n";
-	return 0;
-	//message fuck
-	std::pair<std::vector<int>, std::vector<std::string>> pair = parse_values(vec_values);
-	
-	int res = eval_main(pair);
-
-	std::cout << "EVAL Val == " << res << "\n";
-
-	DecorError decor(vec_lr, vec_values);
-
-	std::cout << decor << "\n";
-	free(buf);
-	std::cout << "exiting with error code: " << rec + normal << "\n";
-	return rec + normal ;
-	//stack.print();
-	std::vector<std::string> list = str2list<std::string>(argv[1]);
-	if(list.size()<1) return 1;
-	Stack<States<std::string>> ss;
-	States<std::string> s;
-	for(auto S : list) {
-		s.compute(S);
-		ss.push(s);
-		std::cout << s << "\n";
-	}
-	return 0;
-	//ss.print();
+	sp.vec_lr = vec_lr;
+	sp.vec_values = vec_values;
+	sp.v_split = v_split;
 }
+

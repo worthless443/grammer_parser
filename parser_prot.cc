@@ -85,7 +85,10 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	}
 
 	free(vec);
-	if(size==2) return tree;
+	if(size==2) {
+		tree->next1 = NULL;
+		return tree;
+	}
 	//if(vec.size()<2) return tree;
 	tree->next1 =  store_as_two_lookaheads(tree->next1, &(*(expr_.begin() + 1)));
 	return tree;

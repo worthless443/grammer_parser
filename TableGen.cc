@@ -87,14 +87,16 @@ std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator
 
 std::vector<std::vector<Item>> iterate_vec2d(std::vector<std::vector<Item>> vec2d) {
 	std::vector<std::vector<Item>> out;
-	int i =0;
+	int i =0,cl_size=0,vsize=0;
 	while(vec2d.size() > 2) {
 		auto vtemp = Iter2Vec(vec2d.begin() , vec2d.end() - (vec2d.size()-2));
-		std::cout << closure(vtemp).size() << "\n";
+		cl_size+=closure(vtemp).size();
 		out.push_back(closure(vtemp));
 		vec2d = Iter2Vec(vec2d.begin() + 2, vec2d.end());
-		std::cout << vec2d.size() << "\n";
+		vsize+=vec2d.size();
 	}
+	printf("closure end adds up to %d\n",cl_size);
+	printf("vector.size() end adds up to %d\n",vsize);
 	return out;
 }
 
@@ -211,7 +213,6 @@ std::vector<Item> Gt(std::vector<Item> vec) {
 		size_t prevsize = temp.size();
 		auto temp_ = make_union(temp,vec);
 		temp.insert(temp.end(),temp_.begin(),temp_.end());  // temp -> temp_ U vec	
-		printf("vec size %ld\n", temp.size());
 		size_t cursize = temp.size();
 		if(cursize>700) break; // limit to what vector can hold, not a complete construction thus
 		if(cursize-prevsize == 30) break;
@@ -231,7 +232,6 @@ std::vector<std::vector<Item>> build_GtTable(std::vector<std::vector<Item>> vec2
 		//	std::cout << "Warning: Size is too big, quitting for now\n";
 		//	break;
 		//}
-		printf("count at %d\n", ++count);
 		out_.push_back(Gt(vec));
 		out.push_back(closure(out_));
 	}

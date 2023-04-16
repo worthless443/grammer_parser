@@ -59,6 +59,12 @@ public:
 	bool operator==(Item item) {return dstict == item.dstict;}
 };
 
+struct ParseParam {
+	std::vector<std::string> vec_lr,vec_values;
+	std::vector<std::vector<std::vector<Item>>> v_split;
+};
+
+
 std::vector<std::vector<Item>> Iter2Vec(std::vector<std::vector<Item>>::iterator begin, std::vector<std::vector<Item>>::iterator end);
 
 int generic_arraySearch(std::vector<int> vec, int what);
@@ -73,6 +79,11 @@ std::vector<std::vector<Item>> iterate_vec2d(std::vector<std::vector<Item>> vec2
 void generate_derivation(std::vector<std::vector<Item>> vec2d);
 std::vector<Item> Convert2D(std::vector<std::vector<Item>> vec2d);
 std::vector<std::vector<Item>> build_GtTable1D(std::vector<std::vector<Item>> vec2d );
+std::vector<std::vector<std::vector<Item>>>
+serialize_count_8(std::vector<std::vector<std::vector<Item>>> v3d);
+int _parall_thread(std::vector<std::vector<std::vector<Item>>> v_split);
+int parall_thread(std::vector<std::vector<std::vector<Item>>> v_split);
+int single_thread(std::vector<std::vector<std::vector<Item>>> v_split);
 template<typename T>
 std::vector<T> Iter2VecT(typename std::vector<T>::iterator begin, typename std::vector<T>::iterator end) {
 		std::vector<T> v;
