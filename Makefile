@@ -5,11 +5,11 @@ CC=g++
 CC1=clang++
 FLAGS= -std=c++20 -Werror
 LINK= -lfmt
-INCLUDE= -I./ -I./fmt/include -L./fmt/build -L./
-OBJS=parser_prot.o TableGen.o eval.o ActionGen.o stack.o
-MAIN=main.cc
+INCLUDE= -I./include -I./fmt/include -L./fmt/build -L./src
+OBJS=src/parser_prot.o src/TableGen.o src/eval.o src/ActionGen.o src/stack.o
+MAIN=src/main.cc
 LIB_LINK=-lfmt -lgram
-LIB=libgram.a
+LIB=src/libgram.a
 FMT=fmt/build/libfmt.a
 ifdef THREAD
 FLAGS+=-DTHREAD=$(THREAD)
@@ -31,4 +31,4 @@ install:
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f $(STACK) $(DESTDIR)$(PREFIX)/bin/$(STACK)
 clean:
-	rm -rf *.o parser *.a
+	rm -rf src/*.o parser src/*.a
