@@ -91,6 +91,9 @@ parse values
 
 exiting with error code: 0[00m
 ```
+## The internal representation for true positives 
+As for now, the code is very primitive, and therefore there has not been defined a grammar spec for which is standard and curroct. The code interpretation is for now a black box, and the AST evaluation might false out without having set a concrete set of specs. From what it appears, the correct syntax is having an asymmetrical `)` at the end of each pair of parenthesis.
+
 ## ToDO 
 
 | Goal | Description | status | 
@@ -103,4 +106,4 @@ exiting with error code: 0[00m
 
 ### Table Generation 
 
-The algorithm is TableGen is obviously wrong, it is 
+The algorithm is TableGen is obviously wrong, it is. So it should fall into the category of FIXME 
