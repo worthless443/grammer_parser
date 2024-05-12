@@ -9,12 +9,14 @@
 #include<iostream>
 #include<vector>
 
-static std::string filter_str(const char *sentence_) {
-	char *sen = (char*)sentence_;
-	for(int i=0;sen[i]!=0;i++) { 
-		if(sen[i]==" "[0]) sen[i] = 0x1;
+
+static std::string filter_str(const char *sentence) {
+	char *buf = (char*)malloc(sizeof(char) * strlen(sentence));
+	for(int i=0,k=-1;i<strlen(sentence)-1;i++) { 
+		if(((char*)sentence)[i] == '(' || ((char*)sentence)[i] == ')') buf[++k] = sentence[i];
 	}
-	std::string _sentence(sen);
+	std::string _sentence(buf);
+	free(buf);
 	return _sentence;
 }
 //printf("catched\n");
@@ -61,9 +63,18 @@ size_t size_int_ptr(int *vec) {
 	for(size=0;*(vec+size);size++);
 	return size;
 }
+
+std::string get_shorter_str(std::string s) {
+	char buf[s.size()] = {0};
+	for(int i=1,k=0;i<s.size();++i,++k)
+		buf[k] = s.c_str()[i];
+	printf("nigger %s\n", buf);
+	return std::string(buf);
+}
+
 rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
-	tree = new rule_t;
 	std::string _expr = filter_str(expr);
+	tree = new rule_t;
 	std::string expr_(_expr) ;
 	int *vec = parse_string(expr);
 	std::string comp((char*)&vec[0]);
@@ -85,12 +96,14 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	}
 
 	free(vec);
-	if(size==2) {
+	if(size==1) {
 		tree->next1 = NULL;
 		return tree;
 	}
-	//if(vec.size()<2) return tree;
-	tree->next1 =  store_as_two_lookaheads(tree->next1, &(*(expr_.begin() + 1)));
+	//printf("size %s\n", _expr.c_str());
+
+	tree->next1 =  store_as_two_lookaheads(tree->next1, 
+			(char*)get_shorter_str(expr).c_str());
 	return tree;
 }
 

@@ -22,27 +22,50 @@
 #include<ActionGen.h>
 
 
-int main(int argc, const char **argv) {
+#define RED "\033[1;31m"
+#define GREEN "\033[1;32m"
+
+int isValidFn(const char *fn) {
+	int i;
+	for(i=0;fn[i]!='.';++i)
+		if(i > strlen(fn))
+			return 0;
+	char buf[strlen(fn) - i - 1];
+	memcpy(buf,fn + i,i+ 1);
+	printf("%s\n",buf);
+	return std::string(buf) == ".br";
+}
+
+int main(int argc, char **argv) {
 	if(argc<2)  {
 		std::cout << "no file provided\n";
 		return 1;
 	}
-	char *buf = (char*)malloc(10000* sizeof(char));
 	FILE *f = NULL;
+	
+		
 	if((f=fopen(argv[1], "r"))==NULL) {
 			perror("parser");
 			return 1;
 	}
-	char shortbuf[1];
+	char *buf = (char*)malloc(sizeof(char));
+	char *shortbuf = buf;
 	int rec = 0, normal = 0;
-	while(fread(shortbuf, 1,1,f)) {
-		strcat(buf,shortbuf);
+	for(int i=0;fread(shortbuf + i, 1,1,f);++i) {
+		buf = (char*)realloc(buf, sizeof(char) * (i + 5));
 	}
-	if(!actions(buf)) { 
+	std::cout << "buf -> " << buf << "\n";
+	//char fn[strlen(argv[1])] = {0};
+	//memcpy(fn, argv[1], strlen(argv[1]));
+	//if(!isValidFn((const char*)fn)) {
+	//	fprintf(stderr,"%s: unrecognized format\n",argv[1]);
+	//	return 1;
+	//}
+	if(actions(buf) == 0) { 
 		std::cout << "Normal:extra parms\n";
 		normal += 1;
-	}
-	else std::cout << "Normal:success\n";
+	} else std::cout << "Normal:success\n";
+	//return 1;
 	if(rec_actions(buf)) {
 		std::cout << "Recrusive:extra parms\n";
 		rec += 1;
@@ -55,11 +78,11 @@ int main(int argc, const char **argv) {
 
 	
 	//auto threads = makeThreads(Iter2VecT<std::vector<std::vector<Item>>>(v_split.begin()+1,v_split.end()));
-//	std::cout << serialize_count_8(v_split).size() << "\n";
+	//std::cout << serialize_count_8(sp.v_split).size() << "\n";
 	get_split_vec(buf, sp);
-	int actions = _parall_thread(serialize_count_8(sp.v_split));
+	int _actions = parall_thread(serialize_count_8(sp.v_split));
 	//int actions = single_thread(v_split);
-	std::cout << "times action " <<  actions << "\n";
+	std::cout << "times action " <<  _actions << "\n";
 	//for(int st : states) std::cout << st << "\n";
 	//generate_derivation(gtitems);
 	//vis_lr_item(gtitems);
@@ -74,7 +97,13 @@ int main(int argc, const char **argv) {
 	DecorError decor(sp.vec_lr, sp.vec_values);
 
 	std::cout << decor << "\n";
+	std::cout << ((rec + normal > 0) ? "\033[1;31m" : "") << "exiting with error code: " << rec + normal << "\033[00m\n";
+	buf[strlen(buf) - 1] = '\0';
+	if(rec + normal)
+		printf("(\"" RED "%s\"\033[00m is invalid)\n",buf, (rec + normal) ? RED : GREEN);
+	else
+		printf("(\"" GREEN "%s\033[00m\" is valid)\n",buf, (rec + normal) ? RED : GREEN);
+
 	free(buf);
-	std::cout << ((rec + normal > 0) ? "\033[1;31m" : "") << "exiting with error code: " << rec + normal << "\033[00m" << "\n";
 	return rec + normal ;
 }

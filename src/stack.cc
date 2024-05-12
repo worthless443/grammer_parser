@@ -63,6 +63,7 @@ Stack<States<std::string>> skeleton_lr(rule_t *tree) {
 	return stack;
 
 }
+
 Stack<std::string> skeleton_values(rule_t *tree) {
 	Stack<std::string> stack;
 	while(tree->next1!=NULL) {
@@ -143,6 +144,7 @@ int rec_actions(char *name) {
 
 int actions(char *name) {
 	rule_t *tree = NULL;
+	printf("faggot (%d)\n", name);
 	tree = store_as_two_lookaheads(tree, name);
 	Stack<States<std::string>> stack = skeleton_lr(tree);
 	Stack<int> s_stack;
@@ -257,16 +259,21 @@ void single_work(std::vector<std::vector<Item>> spitems, int *ret) {
 int parall_thread(std::vector<std::vector<std::vector<Item>>> v_split) {
 	std::vector<std::thread> th;
 	int actions = 0,action;
+	int ret = 0;
+	std::cout << "sizeeee => " << v_split.size() << "\n";
 	for(auto t : v_split) {
 	      std::promise<int> p;
-	      auto fu = p.get_future();
-	      th.push_back(std::thread(work, std::move(p), t));
-	      th[th.size() -1].join();
-		  action = fu.get();
+		  // future
+		  auto fu = p.get_future();
+	      th.push_back(std::thread(n_work,  t,&ret));
+		  //action = fu.get();
 	      actions+=action;
-		  fmt::print("executed action: {}\n",action);
+		  //fmt::print("executed action: {}\n",action);
 	}
-	return actions;
+	for(int i=0;i<th.size();++i)
+		th[i].join(),
+		std::cout << ret << "\n";
+	return 1;
 }
 
 int work_(int i,int *ac) {

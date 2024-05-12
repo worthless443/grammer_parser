@@ -80,13 +80,13 @@ std::vector<int> ActionExec(std::vector<int> vec, Stack<int> &stack, ActionTable
 	int idx = 0;
 	if(vec.size() > 0) {
 		while(1) {
-
 			if(vec[idx]==0) stack.push(3);
 			else if(vec[idx]==1) stack.push(5);
 			if(vec[idx]==1 && vec[idx + 1] == 1 && vec[idx+2]==-1) {
 				break;
 			}
 			idx+=1;
+			if(idx>10) break;
 		}
 	}
 	return Iter2VecT<int>(vec.begin() + idx + 1, vec.end());
@@ -98,7 +98,7 @@ int TimesAction(ActionTable p_vec) {
 	std::vector<int> vec;
 	Stack<int> stack;
 	for(auto pair : p_vec) ActionStates(vec, pair);
-	vec = ActionExec(vec, stack, p_vec);
+	vec = ActionExec(vec, *(Stack<int>*)((int*)&stack + 0), p_vec);
 
 	for(;vec.size()>1;++times) 
 		vec = ActionExec(vec, stack,p_vec);
