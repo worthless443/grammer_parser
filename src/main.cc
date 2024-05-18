@@ -54,6 +54,12 @@ int main(int argc, char **argv) {
 	for(int i=0;fread(shortbuf + i, 1,1,f);++i) {
 		buf = (char*)realloc(buf, sizeof(char) * (i + 5));
 	}
+	char _buf[strlen(buf)] = {0};
+	memcpy(_buf,buf,strlen(buf) - 1);
+ 	if(*buf < 40 || *buf > 41) {
+		fprintf(stderr,"Unkown char \"%s\"\n", _buf);
+		return 1;
+	}
 	std::cout << "buf -> " << buf << "\n";
 	//char fn[strlen(argv[1])] = {0};
 	//memcpy(fn, argv[1], strlen(argv[1]));
