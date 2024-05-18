@@ -17,7 +17,7 @@ else
 FLAGS+=-DTHREAD=16
 endif
 
-all: $(FMT) $(LIB) parser
+all: $(FMT) $(LIB) src/main
 $(FMT):
 	cmake fmt -B fmt/build
 	make -C fmt/build -j16
@@ -25,8 +25,8 @@ $(OBJS) : %.o : %.cc
 	$(CC) -c $(FLAGS) $(INCLUDE) $^ -o $@  
 $(LIB): $(OBJS)
 	ar rcs $@ $^
-parser: $(MAIN)
-	$(CC) $(FLAGS) $(INCLUDE) $^ $(LIB_LINK)  -o $@
+src/main: $(MAIN) $(LIB)
+	$(CC) $(FLAGS) $(INCLUDE) $^ $(LIB_LINK)  -o $(patsubst %.cc,%,$(MAIN))
 install:
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
 	cp -f $(STACK) $(DESTDIR)$(PREFIX)/bin/$(STACK)
