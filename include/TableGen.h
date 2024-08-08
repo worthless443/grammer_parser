@@ -1,3 +1,4 @@
+#include<stack.h>
 template<class T>
 concept VecType = requires(T a ) {
 	{a} -> std::convertible_to<std::vector<int>>;

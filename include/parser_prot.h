@@ -1,5 +1,6 @@
 #include<vector>
 #include<string>
+
 typedef struct rule {
 	const char *param1, *param2;
 	std::string param1_s, param2_s;

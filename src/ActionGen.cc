@@ -13,10 +13,7 @@
 #include<cstring>
 #include<cstdlib>
 
-#include<parser_prot.h>
 #include<eval.h>
-#include<stack.h>
-#include<TableGen.h>
 #include<ActionGen.h>
 
 // there should be a table 

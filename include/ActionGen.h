@@ -1,3 +1,4 @@
+#include<TableGen.h>
 
 enum ActionsEnum {
 	Shift,Reduce, Accept, Fail

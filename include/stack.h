@@ -1,5 +1,7 @@
 //#include<TableGen.h>
 
+#include<parser_prot.h>
+
 typedef struct {} Action; // shoudl be filled with function pointers
 typedef struct {
 public:
@@ -172,9 +174,8 @@ public:
 
 };
 
-void get_split_vec(char *buf, struct ParseParam &sp);
-int actions(char *name);
-int rec_actions(char *name);
+int actions(rule_t*);
+int rec_actions(rule_t*);
 //std::string convertToString(int i) {
 //	std::ostringstream ss;
 //	ss << i;

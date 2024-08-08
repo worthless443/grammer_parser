@@ -4,7 +4,6 @@
 #include<sstream>
 #include<cassert>
 
-#include<stack.h>
 #include<TableGen.h>
 
 // convert into a hashable type
