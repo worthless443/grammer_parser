@@ -2,10 +2,9 @@ ifdef DEBUG
 	DEBUG_GDB=-ggdb3
 endif
 CC=g++
-CC1=clang++
 FLAGS= -std=c++20 -Werror  -ggdb
 LINK= -lfmt
-INCLUDE= -I./include -I./fmt/include -L./fmt/build -L./src
+INCLUDE= -I./include -I./fmt/include -L./fmt/build -L./src 
 OBJS=src/parser_prot.o src/TableGen.o src/eval.o src/ActionGen.o src/stack.o
 MAIN=src/main.cc
 LIB_LINK=-lfmt -lgram

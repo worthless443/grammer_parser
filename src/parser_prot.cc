@@ -19,7 +19,7 @@ static std::string filter_str(const char *sentence) {
 	free(buf);
 	return _sentence;
 }
-//printf("catched\n");
+
 rule_t  *mk_parse_paren(rule_t *rr, char *exp) {
 	rule_t *r;
 	char *exp_ = (char*)malloc(100);
@@ -27,17 +27,17 @@ rule_t  *mk_parse_paren(rule_t *rr, char *exp) {
 	if(strlen(exp)==1) return rr; //use check for terminal symbols instead of converage of senetence `exp`
 
 	for(int j=0;j<strlen(exp);j++) { 
-		if(exp[j]=="("[0] || exp[j] == ")"[0]) { //select which "rules" to apply.
-		for(i=1;i<strlen(exp);i++)  { 
-			if(exp[i]==")"[0]) {
-				break;
+		if(exp[j] == '(' || exp[j] == ')') { //select which "rules" to apply.
+			for(i=1;i<strlen(exp);i++)  { 
+				if(exp[i]==")"[0]) 
+					break;
+				
+				else 
+					exp_[i-1] = exp[i], //check the login since it produces invalid tree
+					exp = exp + 1;
+				
 			}
-			else {
-				exp_[i-1] = exp[i]; //check the login since it produces invalid tree
-				exp = exp + 1;
-			}
-		}
-		break;
+			break;
 	}
 	else  for(int i=0;i<strlen(exp);i++) exp = exp + 1;
 	}
@@ -66,8 +66,7 @@ size_t size_int_ptr(int *vec) {
 
 std::string get_shorter_str(std::string s) {
 	char buf[s.size()] = {0};
-	for(int i=1,k=0;i<s.size();++i,++k)
-		buf[k] = s.c_str()[i];
+	memcpy(buf,s.c_str() + 1, s.size() - 1);
 	printf("nigger %s\n", buf);
 	return std::string(buf);
 }
@@ -77,7 +76,9 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	tree = new rule_t;
 	std::string expr_(_expr) ;
 	int *vec = parse_string(expr);
-	std::string comp((char*)&vec[0]);
+	char b[2] = {0};
+	*b = *vec;
+	std::string comp(b);
 	size_t size = size_int_ptr(vec);
 	if(comp=="(") {
 		tree->param1_s = comp;
@@ -96,14 +97,14 @@ rule_t *store_as_two_lookaheads(rule_t *tree, char *expr) {
 	}
 
 	free(vec);
-	if(size==1) {
+	if(size == 1) {
 		tree->next1 = NULL;
 		return tree;
 	}
-	//printf("size %s\n", _expr.c_str());
+	printf("nigger %s\n",expr);
 
 	tree->next1 =  store_as_two_lookaheads(tree->next1, 
-			(char*)get_shorter_str(expr).c_str());
+			expr + 1);
 	return tree;
 }
 
