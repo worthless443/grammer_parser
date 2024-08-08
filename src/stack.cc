@@ -14,10 +14,6 @@
 #include<cstring>
 #include<cstdlib>
 
-#include<parser_prot.h>
-#include<eval.h>
-#include<stack.h>
-#include<TableGen.h>
 #include<ActionGen.h>
 
 #include<fmt/core.h>
@@ -78,12 +74,9 @@ Stack<std::string> skeleton_values(rule_t *tree) {
 
 // needs the class Stack, inorder to turn into a vector
 
-std::vector<std::string> vectorize_stack_lr(char *name) {
-	rule_t *tree;
+std::vector<std::string> vectorize_stack_lr(rule_t *tree) {
 	std::vector<std::string> vec_lr;
-	tree = store_as_two_lookaheads(tree, name);
 	Stack<States<std::string>> stack_lr = skeleton_lr(tree);
-	free_tree(tree); // leak for once please
 	while(stack_lr.size()>0) {
 		stack_lr++;
 		vec_lr.push_back(stack_lr.top().getstr());
@@ -93,12 +86,9 @@ std::vector<std::string> vectorize_stack_lr(char *name) {
 // needs the class Stack, inorder to turn into a vector. That's why can not put them in another function
 // now that we are using std::vector, we might as well use them in untils.h
 
-std::vector<std::string> vectorize_stack_values(char *name) {
-	rule_t *tree = NULL;
+std::vector<std::string> vectorize_stack_values(rule_t *tree) {
 	std::vector<std::string> vec_values;
-	tree = store_as_two_lookaheads(tree, name);
 	Stack<std::string> stack_values = skeleton_values(tree);
-	free_tree(tree);
 	while(stack_values.size()>0) {
 		stack_values++;
 		vec_values.push_back(stack_values.top());
@@ -118,9 +108,7 @@ auto intVec(std::vector<std::string> vec) {
 	return vec_i;
 }
 
-int rec_actions(char *name) {
-	rule_t *tree = NULL;
-	tree = store_as_two_lookaheads(tree, name);
+int rec_actions(rule_t *tree) {
 	Stack<States<std::string>> stack = skeleton_lr(tree);
 	Stack<int> s_stack;
 	int count_x = 0, count_y = 0;
@@ -142,10 +130,7 @@ int rec_actions(char *name) {
 	return (count_x + count_y)%2;
 }
 
-int actions(char *name) {
-	rule_t *tree = NULL;
-	printf("faggot (%d)\n", name);
-	tree = store_as_two_lookaheads(tree, name);
+int actions(rule_t *tree) {
 	Stack<States<std::string>> stack = skeleton_lr(tree);
 	Stack<int> s_stack;
 	int count_x = 0, count_y = 0;
@@ -346,9 +331,9 @@ int single_thread(std::vector<std::vector<std::vector<Item>>> v_split) {
 	return actions;
 }
 
-void get_split_vec(char *buf, struct ParseParam &sp) {
-	std::vector<std::string> vec_lr = vectorize_stack_lr(buf);
-	std::vector<std::string> vec_values = vectorize_stack_values(buf); 
+void get_split_vec(rule_t *tree, struct ParseParam &sp) {
+	std::vector<std::string> vec_values = vectorize_stack_values(tree); 
+	std::vector<std::string> vec_lr = vectorize_stack_lr(tree);
 	auto items = AllItems(vec_lr);
 	auto items_ = First(items);
 	//std::cout << "Items size  -> " << items_[0].size() << "\n";
